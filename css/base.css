@@ -82,14 +82,6 @@ button:active{ transform: translateY(1px) scale(.99); }
 .text-banker{ color: rgba(255,77,93,.95); }
 .text-player{ color: rgba(70,230,255,.95); }
 
-.bet-panel{
-  display:flex;
-  align-items:flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.betText{ font-size: 18px; font-weight: 950; letter-spacing: .6px; }
-.betMeta{ font-size: 12px; line-height: 1.6; color: rgba(233,238,252,.74); margin-top: 6px; white-space: pre-line; }
 .bet-light{
   width: 18px;
   height: 18px;
@@ -102,7 +94,7 @@ button:active{ transform: translateY(1px) scale(.99); }
 .bet-light.bet-blue{ background: rgba(70,230,255,.95); box-shadow: 0 0 18px rgba(70,230,255,.25), 0 12px 24px rgba(0,0,0,.45); }
 .bet-light.bet-orange{ background: rgba(255,159,28,.95); box-shadow: 0 0 18px rgba(255,159,28,.20), 0 12px 24px rgba(0,0,0,.45); }
 
-/* ===== 撲克牌外框（進階視覺） ===== */
+/* ===== 撲克牌外框 ===== */
 .slot{
   aspect-ratio: 5 / 7;
   height: auto;
@@ -159,6 +151,224 @@ button:active{ transform: translateY(1px) scale(.99); }
   background: linear-gradient(180deg, rgba(245,200,106,.20), rgba(255,255,255,.06));
 }
 
+/* ==================================================
+   ✅ 手機三層 UI：第一層結論卡 + 第二層分析收合
+   ================================================== */
+
+.bet-card{
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  box-shadow: 0 18px 42px rgba(0,0,0,.55);
+  padding: 14px 14px 12px;
+}
+
+.bet-main{
+  font-size: 26px;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.bet-sub{
+  margin-top: 8px;
+  font-size: 14px;
+  color: rgba(233,238,252,.80);
+  letter-spacing: .2px;
+}
+
+.bet-advice{
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(233,238,252,.72);
+  line-height: 1.45;
+}
+
+.bet-card .bet-light{
+  position:absolute;
+  right: 12px;
+  top: 12px;
+}
+
+.analysis{
+  margin-top: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  overflow:hidden;
+}
+
+.analysis summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 12px;
+  user-select:none;
+}
+.analysis summary::-webkit-details-marker{ display:none; }
+
+.sum-title{
+  font-weight: 950;
+  letter-spacing: .6px;
+  color: rgba(233,238,252,.92);
+}
+
+.sum-brief{
+  font-size: 12px;
+  color: rgba(233,238,252,.66);
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  max-width: 62%;
+}
+
+.analysis-body{
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.analysis-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.analysis-row .k{
+  font-size: 12px;
+  color: rgba(233,238,252,.62);
+  letter-spacing: .4px;
+  flex: 0 0 auto;
+}
+
+.analysis-row .v{
+  font-size: 13px;
+  color: rgba(233,238,252,.88);
+  text-align:right;
+  white-space: nowrap;
+}
+
+/* ==================================================
+   ✅ 手機 ☰ 選單：門檻 / 統計 / 回首頁
+   ================================================== */
+
+.menu-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding: 14px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+}
+.menu-overlay.show{ display:flex; }
+
+.menu-card{
+  width: min(520px, 100%);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(18,20,30,.92), rgba(10,10,16,.78));
+  box-shadow: 0 24px 70px rgba(0,0,0,.72);
+  padding: 14px 14px 12px;
+}
+
+.menu-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.menu-title{
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: .8px;
+}
+
+.menu-close{
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 14px;
+}
+
+.menu-section{
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.menu-section:last-child{ border-bottom: 0; }
+
+.menu-label{
+  font-size: 12px;
+  color: rgba(233,238,252,.70);
+  margin-bottom: 8px;
+  letter-spacing: .4px;
+}
+
+.menu-select{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: var(--txt);
+  font-weight: 900;
+}
+
+.menu-stats{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.menu-stat{
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+}
+
+.menu-stat .t{
+  font-size: 12px;
+  color: rgba(233,238,252,.66);
+  letter-spacing: .4px;
+}
+
+.menu-stat .n{
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 1000;
+}
+
+.menu-meta{
+  margin-top: 10px;
+  font-size: 13px;
+  color: rgba(233,238,252,.74);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.menu-actions{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.menu-actions button{
+  padding: 12px 12px;
+  border-radius: 16px;
+}
+
 /* ===== 首頁 ===== */
 body.is-home #resultPanel,
 body.is-home #wrap,
@@ -187,24 +397,29 @@ body.is-home .home-overlay{ display:flex; }
   position: relative;
   overflow:hidden;
 }
+
 .home-head{
   display:flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
 }
+
 .home-title{
   margin:0;
   font-size: 30px;
   font-weight: 950;
   letter-spacing: 1px;
 }
+
 .home-sub{
   margin:0;
   font-size: 13px;
   color: rgba(233,238,252,.72);
 }
+
 .home-lines{ display:grid; gap: 10px; margin: 12px 0 14px; }
+
 .home-item{
   display:flex;
   gap: 10px;
@@ -213,13 +428,16 @@ body.is-home .home-overlay{ display:flex; }
   border: 1px solid rgba(255,255,255,.10);
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
 }
+
 .home-dot{ width: 10px; height: 10px; border-radius: 999px; margin-top: 7px; }
 .home-dot.cyan{ background: rgba(70,230,255,.95); }
 .home-dot.gold{ background: rgba(245,200,106,.95); }
 .home-dot.blue{ background: rgba(58,166,255,.95); }
 .home-dot.orange{ background: rgba(255,159,28,.95); }
+
 .home-text .t{ font-size: 16px; font-weight: 900; }
 .home-text .d{ font-size: 13px; color: rgba(233,238,252,.74); }
+
 .kbd{
   display:inline-flex;
   align-items:center;
@@ -231,6 +449,7 @@ body.is-home .home-overlay{ display:flex; }
   font-weight: 900;
   font-size: 12px;
 }
+
 .kbd.cyan{ border-color: rgba(70,230,255,.26); background: rgba(70,230,255,.10); }
 .kbd.gold{ border-color: rgba(245,200,106,.26); background: rgba(245,200,106,.10); }
 .kbd.blue{ border-color: rgba(58,166,255,.26); background: rgba(58,166,255,.10); }
@@ -245,6 +464,7 @@ body.is-home .home-overlay{ display:flex; }
   padding-top: 12px;
   border-top: 1px solid rgba(245,200,106,.22);
 }
+
 .home-actions label{
   display:flex;
   align-items:center;
@@ -254,6 +474,7 @@ body.is-home .home-overlay{ display:flex; }
   color: rgba(233,238,252,.78);
   font-size: 13px;
 }
+
 .home-actions input[type="checkbox"]{ width:18px; height:18px; accent-color:#46e6ff; }
 .home-btn{ padding: 10px 16px; border-radius: 16px; }
 .home-tip{ margin-top: 10px; font-size: 12px; color: rgba(233,238,252,.62); }

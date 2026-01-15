@@ -70,27 +70,44 @@
     </div>
   </div>
 
-  <!-- 左：結果 -->
+  <!-- ✅ 結果面板（手機：第一層結論 + 第二層收合確認） -->
   <aside class="result-panel" id="resultPanel">
-    <div class="section-title run">【跑牌值】</div>
-    <div class="info" id="runInfo"></div>
-    <div class="result-line" id="runFinal">結果：—</div>
-
-    <div class="divider"></div>
-
-    <div class="section-title matrix">【矩陣】</div>
-    <div class="info" id="matrixInfo"></div>
-    <div class="result-line" id="matrixFinal">結果：—</div>
-
-    <div class="divider"></div>
-
-    <div class="bet-panel">
-      <div class="betTextWrap">
-        <div class="betText" id="betTextLabel">下注建議：</div>
-        <div class="betMeta" id="betMeta">—</div>
-      </div>
+    <!-- 第一層：結論卡 -->
+    <div class="bet-card" id="betCard">
+      <div class="bet-main" id="betMain">建議：—</div>
+      <div class="bet-sub" id="betSub">—</div>
+      <div class="bet-advice" id="betAdvice">—</div>
       <div class="bet-light" id="betLight"></div>
     </div>
+
+    <!-- 第二層：分析確認（預設收合） -->
+    <details class="analysis" id="analysisDetails">
+      <summary>
+        <span class="sum-title">分析依據</span>
+        <span class="sum-brief" id="analysisBrief">跑牌：—｜矩陣：—</span>
+      </summary>
+
+      <div class="analysis-body">
+        <div class="analysis-row">
+          <div class="k">跑牌結果</div>
+          <div class="v" id="runLine">—</div>
+        </div>
+        <div class="analysis-row">
+          <div class="k">矩陣結果</div>
+          <div class="v" id="matrixLine">—</div>
+        </div>
+        <div class="analysis-row">
+          <div class="k">一致判斷</div>
+          <div class="v" id="agreeLine">—</div>
+        </div>
+
+        <!-- 兼容：保留舊 id，避免既有程式找不到 -->
+        <div class="info" id="runInfo" style="display:none"></div>
+        <div class="info" id="matrixInfo" style="display:none"></div>
+        <div class="result-line" id="runFinal" style="display:none">結果：—</div>
+        <div class="result-line" id="matrixFinal" style="display:none">結果：—</div>
+      </div>
+    </details>
   </aside>
 
   <!-- 中：主操作 -->
@@ -109,15 +126,56 @@
 
     <div class="btns" id="btns"></div>
 
+    <!-- ✅ 第三層：操作列（底部固定） -->
     <div class="ops">
       <button id="noDrawBtn">不補牌</button>
       <button id="undoBtn">上一步</button>
       <button id="resetBtn">重置</button>
-      <button id="goHomeBtn">返回首頁</button>
+      <button id="menuBtn" aria-label="選單">☰</button>
     </div>
   </main>
 
-  <!-- 右：統計 -->
+  <!-- ✅ ☰ 選單：門檻 / 統計 / 回首頁 -->
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-card" role="dialog" aria-modal="true" aria-label="設定與統計">
+      <div class="menu-head">
+        <div class="menu-title">設定 / 統計</div>
+        <button class="menu-close" id="menuCloseBtn" aria-label="關閉">✕</button>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-label">門檻（把一致才下注）</div>
+        <select id="thresholdSelectMenu" class="menu-select">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
+      <div class="menu-section menu-stats">
+        <div class="menu-stat">
+          <div class="t">已下注局數</div>
+          <div class="n cyan" id="betCountMenu">0</div>
+        </div>
+        <div class="menu-stat">
+          <div class="t">命中次數</div>
+          <div class="n blue" id="hitCountMenu">0</div>
+        </div>
+
+        <div class="menu-meta" id="hitRateMenu">命中率：—</div>
+        <div class="menu-meta" id="phaseMenu">盤況：—</div>
+
+        <button class="reset-shared" id="resetStatsBtnMenu">重置統計</button>
+      </div>
+
+      <div class="menu-actions">
+        <button id="goHomeBtnMenu">返回首頁</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右：統計（桌機用；手機用 mobile.css 隱藏） -->
   <aside class="stats-right" id="statsRight">
     <div class="panel">
       <div class="panel-title">已下注局數</div>
@@ -171,7 +229,7 @@
     })();
   </script>
 
-  <!-- ✅ iPhone/Safari 最穩：直接載入帶版本 main.js（不靠 importmap） -->
+  <!-- ✅ iPhone/Safari 最穩：直接載入帶版本 main.js -->
   <script type="module">
     import "./js/main.js?v=20260115";
   </script>

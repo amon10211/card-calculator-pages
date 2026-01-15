@@ -14,85 +14,162 @@ export function renderCards(cards, cardImgUrl) {
   }
 }
 
-export function renderResult(runResult, matrixResult, betSuggestion) {
-  const runInfoEl = document.getElementById("runInfo");
-  const runFinalEl = document.getElementById("runFinal");
-  const matrixInfoEl = document.getElementById("matrixInfo");
-  const matrixFinalEl = document.getElementById("matrixFinal");
+function safeSetText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
 
-  // ✅ 中間過程不顯示（只留結果）
+function safeSetClass(id, addClass, removeClasses = []) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  removeClasses.forEach((c) => el.classList.remove(c));
+  if (addClass) el.classList.add(addClass);
+}
+
+function firstLine(s) {
+  if (!s) return "—";
+  return String(s).split("\n")[0] || "—";
+}
+
+function secondLine(s) {
+  if (!s) return "";
+  const arr = String(s).split("\n");
+  return arr[1] || "";
+}
+
+function thirdLine(s) {
+  if (!s) return "";
+  const arr = String(s).split("\n");
+  return arr[2] || "";
+}
+
+export function renderResult(runResult, matrixResult, betSuggestion) {
+  // 兼容：舊元素仍可能存在
+  const runInfoEl = document.getElementById("runInfo");
+  const matrixInfoEl = document.getElementById("matrixInfo");
   if (runInfoEl) runInfoEl.innerText = "";
   if (matrixInfoEl) matrixInfoEl.innerText = "";
 
-  runFinalEl.innerText = `結果：${runResult?.final || "—"}`;
-  matrixFinalEl.innerText = `結果：${matrixResult?.final || "—"}`;
+  const runFinal = runResult?.final || "—";
+  const matrixFinal = matrixResult?.final || "—";
 
-  runFinalEl.classList.remove("text-banker", "text-player");
-  matrixFinalEl.classList.remove("text-banker", "text-player");
-
-  if (runResult?.final === "莊") runFinalEl.classList.add("text-banker");
-  else if (runResult?.final === "閒") runFinalEl.classList.add("text-player");
-
-  if (matrixResult?.final === "莊") matrixFinalEl.classList.add("text-banker");
-  else if (matrixResult?.final === "閒") matrixFinalEl.classList.add("text-player");
-
-  const betTextEl = document.getElementById("betTextLabel");
-  const betMetaEl = document.getElementById("betMeta");
+  // ===== 第一層：結論卡 =====
+  const betMainEl = document.getElementById("betMain");
+  const betSubEl = document.getElementById("betSub");
+  const betAdviceEl = document.getElementById("betAdvice");
   const betLightEl = document.getElementById("betLight");
 
-  betTextEl.classList.remove("text-banker", "text-player");
-  betTextEl.innerText = `下注建議：${betSuggestion?.text || ""}`;
-  betMetaEl.innerText = betSuggestion?.meta || "—";
-
-  betLightEl.className = "bet-light";
-  if (betSuggestion?.light) betLightEl.classList.add(betSuggestion.light);
-
-  // 只有真的 BET 才上色
-  if (betSuggestion?.action === "BET") {
-    if (betSuggestion?.dir === "莊") betTextEl.classList.add("text-banker");
-    else if (betSuggestion?.dir === "閒") betTextEl.classList.add("text-player");
+  let mainText = "建議：—";
+  if (betSuggestion?.action === "BET" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")) {
+    mainText = `建議下注：${betSuggestion.dir}`;
+  } else if (betSuggestion?.action === "WAIT" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")) {
+    mainText = `觀察中：${betSuggestion.dir}`;
+  } else if (betSuggestion?.action === "NO_BET") {
+    mainText = "建議：不下注";
   }
+
+  if (betMainEl) {
+    betMainEl.innerText = mainText;
+    betMainEl.classList.remove("text-banker", "text-player");
+    if (betSuggestion?.dir === "莊") betMainEl.classList.add("text-banker");
+    if (betSuggestion?.dir === "閒") betMainEl.classList.add("text-player");
+  }
+
+  const meta = betSuggestion?.meta || "—";
+  const sub = [firstLine(meta), secondLine(meta)].filter(Boolean).join("｜");
+  if (betSubEl) betSubEl.innerText = sub || "—";
+  if (betAdviceEl) betAdviceEl.innerText = thirdLine(meta) || secondLine(meta) || "—";
+
+  if (betLightEl) {
+    betLightEl.className = "bet-light";
+    if (betSuggestion?.light) betLightEl.classList.add(betSuggestion.light);
+  }
+
+  // ===== 第二層：分析收合 =====
+  safeSetText("analysisBrief", `跑牌：${runFinal}｜矩陣：${matrixFinal}`);
+
+  const runTag = runResult?.flipped ? "（翻邊）" : "";
+  safeSetText("runLine", `${runFinal}${runTag}`);
+  safeSetClass("runLine",
+    runFinal === "莊" ? "text-banker" : runFinal === "閒" ? "text-player" : "",
+    ["text-banker", "text-player"]
+  );
+
+  const pol = Number(matrixResult?.polarity || 0);
+  const polTag = pol === 1 ? "（正極）" : pol === -1 ? "（負極）" : "";
+  safeSetText("matrixLine", `${matrixFinal}${polTag}`);
+  safeSetClass("matrixLine",
+    matrixFinal === "莊" ? "text-banker" : matrixFinal === "閒" ? "text-player" : "",
+    ["text-banker", "text-player"]
+  );
+
+  let agreeText = firstLine(meta);
+  if (!agreeText || agreeText === "—") {
+    const agree = runFinal === matrixFinal && (runFinal === "莊" || runFinal === "閒");
+    agreeText = agree ? `一致：${runFinal}` : "一致：否（衝突/無方向）";
+  }
+  safeSetText("agreeLine", agreeText);
+
+  // ===== 舊結果行兼容（不顯示，但保留不破壞） =====
+  safeSetText("runFinal", `結果：${runFinal}`);
+  safeSetText("matrixFinal", `結果：${matrixFinal}`);
+  safeSetClass("runFinal",
+    runFinal === "莊" ? "text-banker" : runFinal === "閒" ? "text-player" : "",
+    ["text-banker", "text-player"]
+  );
+  safeSetClass("matrixFinal",
+    matrixFinal === "莊" ? "text-banker" : matrixFinal === "閒" ? "text-player" : "",
+    ["text-banker", "text-player"]
+  );
 }
 
 export function renderStats(betCount, hitCount, phaseText) {
-  document.getElementById("betCount").innerText = String(betCount);
-  document.getElementById("hitCount").innerText = String(hitCount);
+  // 桌機 / 舊區塊
+  safeSetText("betCount", String(betCount));
+  safeSetText("hitCount", String(hitCount));
 
-  const rateEl = document.getElementById("hitRate");
-  if (betCount > 0) {
-    const rate = ((hitCount / betCount) * 100).toFixed(1);
-    rateEl.innerText = `命中率：${rate}%`;
-  } else {
-    rateEl.innerText = "命中率：—";
-  }
+  const rate = betCount > 0 ? ((hitCount / betCount) * 100).toFixed(1) : null;
+  safeSetText("hitRate", rate ? `命中率：${rate}%` : "命中率：—");
+  safeSetText("phase", phaseText || "盤況：—");
 
-  const phaseEl = document.getElementById("phase");
-  if (phaseEl) {
-    phaseEl.innerText = phaseText || "盤況：—";
-  }
+  // ☰ 選單同步
+  safeSetText("betCountMenu", String(betCount));
+  safeSetText("hitCountMenu", String(hitCount));
+  safeSetText("hitRateMenu", rate ? `命中率：${rate}%` : "命中率：—");
+  safeSetText("phaseMenu", phaseText || "盤況：—");
 }
 
 export function resetUIKeepColon() {
+  // 第一層
+  safeSetText("betMain", "建議：—");
+  safeSetText("betSub", "—");
+  safeSetText("betAdvice", "—");
+
+  const betLightEl = document.getElementById("betLight");
+  if (betLightEl) betLightEl.className = "bet-light";
+
+  const betMainEl = document.getElementById("betMain");
+  if (betMainEl) betMainEl.classList.remove("text-banker", "text-player");
+
+  // 第二層
+  safeSetText("analysisBrief", "跑牌：—｜矩陣：—");
+  safeSetText("runLine", "—");
+  safeSetText("matrixLine", "—");
+  safeSetText("agreeLine", "—");
+  safeSetClass("runLine", "", ["text-banker", "text-player"]);
+  safeSetClass("matrixLine", "", ["text-banker", "text-player"]);
+
+  // 舊元素兼容
+  safeSetText("runFinal", "結果：—");
+  safeSetText("matrixFinal", "結果：—");
+  safeSetClass("runFinal", "", ["text-banker", "text-player"]);
+  safeSetClass("matrixFinal", "", ["text-banker", "text-player"]);
+
   const runInfoEl = document.getElementById("runInfo");
   const matrixInfoEl = document.getElementById("matrixInfo");
   if (runInfoEl) runInfoEl.innerText = "";
   if (matrixInfoEl) matrixInfoEl.innerText = "";
 
-  const runFinalEl = document.getElementById("runFinal");
-  runFinalEl.innerText = "結果：—";
-
-  const matrixFinalEl = document.getElementById("matrixFinal");
-  matrixFinalEl.innerText = "結果：—";
-
-  runFinalEl.classList.remove("text-banker", "text-player");
-  matrixFinalEl.classList.remove("text-banker", "text-player");
-
-  const betTextEl = document.getElementById("betTextLabel");
-  const betMetaEl = document.getElementById("betMeta");
-  const betLightEl = document.getElementById("betLight");
-
-  betTextEl.innerText = "下注建議：";
-  betTextEl.classList.remove("text-banker", "text-player");
-  betMetaEl.innerText = "—";
-  betLightEl.className = "bet-light";
+  const details = document.getElementById("analysisDetails");
+  if (details && details.open) details.open = false;
 }

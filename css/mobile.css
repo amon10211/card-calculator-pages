@@ -38,9 +38,9 @@ body{
   gap: 12px;
 }
 
-/* 數字鍵盤：大顆 */
+/* ✅ 數字鍵盤：6 顆一排 */
 .btns{
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 8px;
   margin-bottom: 96px; /* 給底部 ops 空間，避免被蓋住 */
 }
@@ -61,63 +61,25 @@ body{
   box-shadow: 0 14px 30px rgba(0,0,0,.50);
 }
 
-/* 統計：底部兩欄 */
-.stats-right{
-  width: 100%;
-  margin-top: 10px;
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.panel{ padding: 10px 12px; border-radius: 18px; }
-.panel-value{ font-size: 28px; }
+/* ✅ 桌機統計欄手機隱藏：改放進 ☰ 選單 */
+#statsRight{ display:none; }
 
-@media (max-width: 420px){
-  .btns{ grid-template-columns: repeat(6, 1fr); }
-  .ops{ grid-template-columns: repeat(2, 1fr); }
-  .slot{ height: 102px; }
-}
-
-/* ===== 手機版統計字體放大 ===== */
-.stats-right .panel-title{
-  font-size: 14px;
-}
-
-.stats-right .panel-value{
-  font-size: 32px;
-}
-
-.stats-right .rate{
-  font-size: 14px;
-}
-
-.stats-right .phase{
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* ===== 手機版下排牌框對齊上排 ===== */
+/* 牌框 */
 .board2{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
-
-.board2 #s5{
-  grid-column: 2 / 3;
-}
-
-.board2 #s6{
-  grid-column: 3 / 4;
-}
-
-.betMeta{
-  font-size: 13px;
-  line-height: 1.6;
-}
+.board2 #s5{ grid-column: 2 / 3; }
+.board2 #s6{ grid-column: 3 / 4; }
 
 .slot{
   height: auto;
   aspect-ratio: 5 / 7;
   border-radius: 12px;
+}
+
+@media (max-width: 420px){
+  .ops{ grid-template-columns: repeat(2, 1fr); }
+  .slot{ height: 102px; }
 }

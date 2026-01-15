@@ -30,5 +30,20 @@ export function initButtons(){
   document.getElementById("noDrawBtn").addEventListener("click", ()=> window.noDraw());
   document.getElementById("undoBtn").addEventListener("click", ()=> window.undo());
   document.getElementById("resetBtn").addEventListener("click", ()=> window.resetAll());
-  document.getElementById("resetStatsBtn").addEventListener("click", ()=> window.resetStatsOnly());
+
+  const rs = document.getElementById("resetStatsBtn");
+  if(rs) rs.addEventListener("click", ()=> window.resetStatsOnly());
+
+  // ☰ 選單（手機主用）
+  const menuBtn = document.getElementById("menuBtn");
+  if(menuBtn) menuBtn.addEventListener("click", ()=> window.toggleMenu?.(true));
+
+  const menuCloseBtn = document.getElementById("menuCloseBtn");
+  if(menuCloseBtn) menuCloseBtn.addEventListener("click", ()=> window.toggleMenu?.(false));
+
+  const resetStatsBtnMenu = document.getElementById("resetStatsBtnMenu");
+  if(resetStatsBtnMenu) resetStatsBtnMenu.addEventListener("click", ()=> window.resetStatsOnly());
+
+  const goHomeBtnMenu = document.getElementById("goHomeBtnMenu");
+  if(goHomeBtnMenu) goHomeBtnMenu.addEventListener("click", ()=> window.goHome());
 }

@@ -36,6 +36,22 @@ function bindThresholdSelect(){
   });
 }
 
+function bindThresholdSelectMenu(){
+  const sel = document.getElementById("thresholdSelectMenu");
+  if(!sel) return;
+
+  sel.value = String(THRESHOLD);
+
+  sel.addEventListener("change", ()=>{
+    const v = Number(sel.value);
+    if([1,2,3,4].includes(v)){
+      THRESHOLD = v;
+      try{ localStorage.setItem(THRESHOLD_KEY, String(v)); }catch(e){}
+      renderStats(betCount.value, hitCount.value, getPhaseText());
+    }
+  });
+}
+
 loadThreshold();
 
 /* 牌圖 */
@@ -160,15 +176,39 @@ renderCards(cards, cardImgUrl);
 resetUIKeepColon();
 renderStats(betCount.value, hitCount.value, getPhaseText());
 
-// ✅ 綁定門檻下拉（要在 DOM 就緒後，這裡直接再綁一次也安全）
+// ✅ 綁定門檻（桌機 + ☰ 選單）
 bindThresholdSelect();
+bindThresholdSelectMenu();
 
 // 返回首頁
 window.goHome = function(){
+  window.toggleMenu?.(false);
   document.body.classList.add("is-home");
 };
 
-const goHomeBtn = document.getElementById("goHomeBtn");
-if(goHomeBtn){
-  goHomeBtn.addEventListener("click", ()=> window.goHome());
+// ☰ 選單控制
+window.toggleMenu = function(show){
+  const overlay = document.getElementById("menuOverlay");
+  if(!overlay) return;
+
+  if(show){
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden", "false");
+  }else{
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+};
+
+// 點遮罩關閉
+const menuOverlay = document.getElementById("menuOverlay");
+if(menuOverlay){
+  menuOverlay.addEventListener("click", (e)=>{
+    if(e.target === menuOverlay) window.toggleMenu(false);
+  });
 }
+
+// ESC 關閉選單（不影響首頁 ESC 進入）
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") window.toggleMenu?.(false);
+});
