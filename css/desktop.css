@@ -40,3 +40,43 @@ body{
   flex-direction: column;
   gap: 12px;
 }
+
+/* ===== 右側統計欄字體放大 ===== */
+.stats-right .panel-title{
+  font-size: 15px;
+}
+
+.stats-right .panel-value{
+  font-size: 40px;
+}
+
+.stats-right .rate{
+  font-size: 15px;
+}
+
+.stats-right .phase{
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ===== 下排兩張牌，尺寸與上面四張一致 ===== */
+.board2{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* 讓下面兩張卡放在中間兩格 */
+.board2 #s5{
+  grid-column: 2 / 3;
+}
+
+.board2 #s6{
+  grid-column: 3 / 4;
+}
+
+.stats-right .betMeta,
+.result-panel .betMeta{
+  font-size: 14px;
+  line-height: 1.7;
+}
