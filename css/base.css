@@ -57,7 +57,7 @@ button:active{ transform: translateY(1px) scale(.99); }
   color: rgba(233,238,252,.88);
 }
 .section-title.run{ color: rgba(245,200,106,.95); }
-.section-title.matrix{ color: rgba(70,230,255,.95); }
+.section-title.matrix{ color: rgba(245,200,106,.95); }
 
 .divider{
   height: 1px;

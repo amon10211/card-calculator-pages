@@ -40,7 +40,7 @@ body{
 
 /* 數字鍵盤：大顆 */
 .btns{
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 96px; /* 給底部 ops 空間，避免被蓋住 */
 }
