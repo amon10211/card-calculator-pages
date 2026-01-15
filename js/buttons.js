@@ -1,5 +1,5 @@
-import { cards, done } from "./state.js?v=20260116";
-import { onInputChanged, settleIfReady, startNewRound } from "./main.js?v=20260116";
+import { cards, done } from "./state.js?v=20260117";
+import { onInputChanged, settleIfReady, startNewRound } from "./main.js?v=20260117";
 
 const CARD_BTNS = ["A",2,3,4,5,6,7,8,9,10,"J","Q","K"];
 

@@ -3,11 +3,11 @@ import {
   setPendingBet, checkHit, resetCards, resetStats,
   incAgreeCount, getAgreeCount,
   getRecentRate, RECENT_N
-} from "./state.js?v=20260116";
+} from "./state.js?v=20260117";
 
-import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260116";
-import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260116";
-import { initButtons } from "./buttons.js?v=20260116";
+import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260117";
+import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260117";
+import { initButtons } from "./buttons.js?v=20260117";
 
 /* ===== 門檻設定（支援 1 / 2 / 3 / 4）===== */
 const THRESHOLD_KEY = "roadmind_threshold_v1";
