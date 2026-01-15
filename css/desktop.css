@@ -80,3 +80,7 @@ body{
   font-size: 14px;
   line-height: 1.7;
 }
+
+/* ✅ 桌機版：隱藏手機用 ☰ 選單按鈕與選單遮罩 */
+#menuBtn{ display:none !important; }
+#menuOverlay{ display:none !important; }

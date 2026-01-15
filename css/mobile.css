@@ -1,85 +1,145 @@
-html, body{ overflow:auto; height:auto; }
-
-body{
-  display:block;
-  padding: 10px 10px 16px;
+/* ✅ 手機：整頁固定一屏，不滾動 */
+html, body{
+  height: 100%;
+  overflow: hidden;
 }
 
+body{
+  height: 100svh;               /* iOS 新單位，避免工具列吃高度 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+/* safe area */
 :root{
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 }
 
-/* 上：結果 sticky */
+/* =========================
+   上：結果區（不再 sticky，固定在最上）
+========================= */
 .result-panel{
-  position: sticky;
-  top: calc(8px + var(--safe-top));
-  z-index: 999;
+  position: relative;
+  top: auto;
+  z-index: 1;
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border-radius: 18px;
   border: 1px solid var(--stroke);
   background: linear-gradient(180deg, rgba(18,20,30,.82), rgba(10,10,16,.62));
   backdrop-filter: blur(10px);
   box-shadow: 0 16px 38px rgba(0,0,0,.55);
+  flex: 0 0 auto;
 }
 
-/* 中：主操作 */
+/* ✅ 第一層結論卡縮: 縮一點，避免佔太多高度 */
+.bet-card{ padding: 12px 12px 10px; }
+.bet-main{ font-size: 22px; line-height: 1.08; }
+.bet-sub{ font-size: 13px; margin-top: 6px; }
+.bet-advice{ font-size: 12px; margin-top: 4px; line-height: 1.35; }
+.bet-card .bet-light{ right: 10px; top: 10px; width: 16px; height: 16px; }
+
+/* ✅ 第二層收合：summary 做薄一點 */
+.analysis summary{ padding: 10px 12px; }
+.sum-title{ font-size: 14px; }
+.sum-brief{ font-size: 12px; max-width: 64%; }
+.analysis-body{ padding: 8px 12px 10px; }
+.analysis-row{ padding: 6px 0; }
+.analysis-row .k{ font-size: 12px; }
+.analysis-row .v{ font-size: 12px; }
+
+/* =========================
+   中：主操作區（吃掉剩餘高度）
+========================= */
 .wrap{
   width: 100%;
-  margin-top: 10px;
-  padding: 12px 10px;
+  margin-top: 0;
+  padding: 10px 10px;
   border-radius: 18px;
   border: 1px solid var(--stroke);
   background: linear-gradient(180deg, var(--panel2), var(--panel));
   box-shadow: 0 16px 38px rgba(0,0,0,.55);
-  display:flex;
+
+  display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-/* ✅ 數字鍵盤：6 顆一排 */
-.btns{
-  grid-template-columns: repeat(6, 1fr);
   gap: 8px;
-  margin-bottom: 96px; /* 給底部 ops 空間，避免被蓋住 */
-}
-.btns button{ padding: 12px 0; font-size: 15px; border-radius: 14px; }
 
-/* 下：操作列 sticky */
-.ops{
-  position: sticky;
-  bottom: calc(8px + var(--safe-bottom));
-  z-index: 998;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 8px;
-  border-radius: 18px;
-  background: rgba(10, 12, 18, .55);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 14px 30px rgba(0,0,0,.50);
+  flex: 1 1 auto;   /* ✅ 撐滿剩餘高度 */
+  min-height: 0;    /* ✅ 允許內部縮小，不撐爆 */
 }
 
-/* ✅ 桌機統計欄手機隱藏：改放進 ☰ 選單 */
-#statsRight{ display:none; }
-
-/* 牌框 */
+/* 牌面：縮間距 + 牌框高度跟螢幕綁定 */
+.board{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .board2{
-  display: grid;
+  display:grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 .board2 #s5{ grid-column: 2 / 3; }
 .board2 #s6{ grid-column: 3 / 4; }
 
+/* ✅ 牌框尺寸：用 clamp 限制最大高度，確保鍵盤塞得下 */
 .slot{
   height: auto;
   aspect-ratio: 5 / 7;
   border-radius: 12px;
 }
+.slot img{ width: 100%; height: 100%; object-fit: contain; }
 
-@media (max-width: 420px){
+/* =========================
+   鍵盤：6 顆一排，縮小一點
+========================= */
+.btns{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin: 0;            /* ✅ 移除撐高 */
+  padding: 0;
+}
+
+.btns button{
+  padding: 10px 0;
+  font-size: 14px;
+  border-radius: 14px;
+}
+
+/* =========================
+   底：操作列（不再 sticky，直接放在最底）
+========================= */
+.ops{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px;
+  border-radius: 18px;
+
+  background: rgba(10, 12, 18, .55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 14px 30px rgba(0,0,0,.50);
+
+  margin-top: 6px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+}
+
+/* ✅ 手機：桌機統計欄隱藏（已改放 ☰ 選單） */
+#statsRight{ display:none; }
+
+/* ✅ 小螢幕再壓縮一點 */
+@media (max-width: 390px){
+  body{ gap: 8px; padding: 8px; }
+  .result-panel{ padding: 9px; }
+  .wrap{ padding: 9px; gap: 7px; }
+  .board, .board2{ gap: 7px; }
+  .btns{ gap: 5px; }
+  .btns button{ padding: 9px 0; font-size: 13px; }
+  .ops{ gap: 5px; }
+}
+
+/* ✅ 更小：操作列改 2 欄避免太擠 */
+@media (max-width: 360px){
   .ops{ grid-template-columns: repeat(2, 1fr); }
-  .slot{ height: 102px; }
 }
