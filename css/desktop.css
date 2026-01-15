@@ -41,89 +41,75 @@ body{
   gap: 12px;
 }
 
-/* ===== 右側統計欄字體放大 ===== */
-.stats-right .panel-title{
-  font-size: 15px;
-}
+/* ===== 右側統計欄字體 ===== */
+.stats-right .panel-title{ font-size: 15px; }
+.stats-right .panel-value{ font-size: 40px; }
+.stats-right .rate{ font-size: 15px; }
+.stats-right .phase{ font-size: 14px; line-height: 1.7; }
 
-.stats-right .panel-value{
-  font-size: 40px;
-}
-
-.stats-right .rate{
-  font-size: 15px;
-}
-
-.stats-right .phase{
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-/* ===== 下排兩張牌，尺寸與上面四張一致 ===== */
+/* ===== 下排兩張牌對齊 ===== */
 .board2{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
+.board2 #s5{ grid-column: 2 / 3; }
+.board2 #s6{ grid-column: 3 / 4; }
 
-/* 讓下面兩張卡放在中間兩格 */
-.board2 #s5{
-  grid-column: 2 / 3;
-}
-
-.board2 #s6{
-  grid-column: 3 / 4;
-}
-
-.stats-right .betMeta,
-.result-panel .betMeta{
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-/* ✅ 桌機版：隱藏手機用 ☰ 選單按鈕與選單遮罩 */
-#menuBtn{ display:none !important; }
+/* ===== 桌機隱藏手機選單 ===== */
+#menuBtn,
 #menuOverlay{ display:none !important; }
 
 /* ==================================================
-   ✅ 桌機：門檻下拉改成「手機 menu-select」同風格
-   （圓角玻璃感 + padding + 客製箭頭）
+   ✅ 門檻（把一致才下注）
+   下拉選單：放在標題裡、變短
    ================================================== */
 
 .threshold-row{
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid rgba(255,255,255,.10);
+
   display:flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
+/* 左邊文字 */
 .threshold-label{
   font-size: 12px;
   color: rgba(233,238,252,.70);
   letter-spacing: .4px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
-/* base.css 已有 .menu-select 的底色/圓角/字重，桌機補上「去原生外觀 + 箭頭」 */
+/* 右邊短版下拉 */
 .desktop-threshold{
+  width: 72px;              /* ✅ 變短的關鍵 */
+  min-width: 72px;
+  text-align: center;
+
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  padding-right: 44px; /* 留空給箭頭 */
-  line-height: 1.2;
+  padding: 8px 28px 8px 10px; /* 右邊留箭頭空間 */
+  font-size: 14px;
+  font-weight: 900;
+  border-radius: 12px;
 
   background-image:
     linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='rgba(233,238,252,0.78)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
   background-repeat: no-repeat, no-repeat;
-  background-position: 0 0, right 14px center;
-  background-size: auto, 18px 18px;
+  background-position: 0 0, right 10px center;
+  background-size: auto, 16px 16px;
 }
 
-/* 讓 focus 跟手機一樣更乾淨 */
+/* Focus 狀態 */
 .desktop-threshold:focus{
   outline: none;
   border-color: rgba(70,230,255,.28);
