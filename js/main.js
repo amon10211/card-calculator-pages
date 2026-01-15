@@ -3,11 +3,11 @@ import {
   setPendingBet, checkHit, resetCards, resetStats,
   incAgreeCount, getAgreeCount,
   getRecentRate, RECENT_N
-} from "./state.js?v=20260115";
+} from "./state.js?v=20260116";
 
-import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260115";
-import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260115";
-import { initButtons } from "./buttons.js?v=20260115";
+import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260116";
+import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260116";
+import { initButtons } from "./buttons.js?v=20260116";
 
 /* ===== 門檻設定（支援 1 / 2 / 3 / 4）===== */
 const THRESHOLD_KEY = "roadmind_threshold_v1";
@@ -73,6 +73,42 @@ function getPhaseText(){
   return `盤況：🔥順盤（近${RECENT_N}把 ${pct}%）可正常跟`;
 }
 
+/* =========================
+   ✅ 先把手機選單功能掛到 window（避免慢機點了沒反應）
+========================= */
+window.toggleMenu = function(show){
+  const overlay = document.getElementById("menuOverlay");
+  if(!overlay) return;
+
+  if(show){
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden", "false");
+  }else{
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+};
+
+window.goHome = function(){
+  window.toggleMenu(false);
+  document.body.classList.add("is-home");
+};
+
+// 點遮罩關閉
+const menuOverlay = document.getElementById("menuOverlay");
+if(menuOverlay){
+  menuOverlay.addEventListener("click", (e)=>{
+    if(e.target === menuOverlay) window.toggleMenu(false);
+  });
+}
+
+// ESC 關閉選單（不影響首頁 ESC 進入）
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") window.toggleMenu(false);
+});
+
+/* ========================= */
+
 export function onInputChanged(){
   renderCards(cards, cardImgUrl);
 }
@@ -110,7 +146,6 @@ function settleRound(){
   // 取得該方向累積一致次數
   const agreeCountForDir = agreeDir ? getAgreeCount(agreeDir) : 0;
 
-  // ✅ 門檻改用可切換 THRESHOLD
   const betSuggestion = calcBetSuggestion(runResult, matrixResult, agreeCountForDir, THRESHOLD);
   renderResult(runResult, matrixResult, betSuggestion);
 
@@ -176,39 +211,6 @@ renderCards(cards, cardImgUrl);
 resetUIKeepColon();
 renderStats(betCount.value, hitCount.value, getPhaseText());
 
-// ✅ 綁定門檻（桌機 + ☰ 選單）
+// 綁定門檻（桌機 + ☰ 選單）
 bindThresholdSelect();
 bindThresholdSelectMenu();
-
-// 返回首頁
-window.goHome = function(){
-  window.toggleMenu?.(false);
-  document.body.classList.add("is-home");
-};
-
-// ☰ 選單控制
-window.toggleMenu = function(show){
-  const overlay = document.getElementById("menuOverlay");
-  if(!overlay) return;
-
-  if(show){
-    overlay.classList.add("show");
-    overlay.setAttribute("aria-hidden", "false");
-  }else{
-    overlay.classList.remove("show");
-    overlay.setAttribute("aria-hidden", "true");
-  }
-};
-
-// 點遮罩關閉
-const menuOverlay = document.getElementById("menuOverlay");
-if(menuOverlay){
-  menuOverlay.addEventListener("click", (e)=>{
-    if(e.target === menuOverlay) window.toggleMenu(false);
-  });
-}
-
-// ESC 關閉選單（不影響首頁 ESC 進入）
-window.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") window.toggleMenu?.(false);
-});
