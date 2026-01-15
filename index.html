@@ -188,15 +188,15 @@
       <div class="rate" id="hitRate">命中率：—</div>
       <div class="phase" id="phase">盤況：—</div>
 
-      <div class="phase" style="margin-top:8px;">
-        門檻：
-        <select id="thresholdSelect">
+      <!-- ✅ 桌機門檻下拉：改成手機 menu-select 風格 -->
+      <div class="threshold-row">
+        <div class="threshold-label">門檻（把一致才下注）</div>
+        <select id="thresholdSelect" class="menu-select desktop-threshold">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
           <option value="4">4</option>
         </select>
-        把一致才下注
       </div>
 
       <button class="reset-shared" id="resetStatsBtn">重置統計</button>
