@@ -91,12 +91,12 @@ function cardImgUrl(v){
 
 function getPhaseText(){
   const r = getRecentRate();
-  if(r == null) return `盤況：—（近${RECENT_N}把不足）`;
+  if(r == null) return `盤況：—`;
 
   const pct = (r * 100).toFixed(0);
-  if(r < 0.45) return `盤況：⚠️震盪（近${RECENT_N}把 ${pct}%）建議降注/停`;
-  if(r <= 0.55) return `盤況：中性（近${RECENT_N}把 ${pct}%）正常控注`;
-  return `盤況：🔥順盤（近${RECENT_N}把 ${pct}%）可正常跟`;
+  if(r < 0.45) return `盤況：⚠️反開房 建議降注/停或是反打/換房`;
+  if(r <= 0.55) return `盤況：中性 正常控注`;
+  return `盤況：🔥正開房 可正常跟`;
 }
 
 /* =========================
