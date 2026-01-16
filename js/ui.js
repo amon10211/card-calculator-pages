@@ -78,7 +78,10 @@ export function renderResult(runResult, matrixResult, betSuggestion) {
   const meta = betSuggestion?.meta || "—";
   const sub = [firstLine(meta), secondLine(meta)].filter(Boolean).join("｜");
   if (betSubEl) betSubEl.innerText = sub || "—";
-  if (betAdviceEl) betAdviceEl.innerText = thirdLine(meta) || secondLine(meta) || "—";
+  // ✅ 沒有第 3 行時，不要把第 2 行再塞到 betAdvice，避免重複
+  const line3 = thirdLine(meta);
+  if (betAdviceEl) betAdviceEl.innerText = line3 ? line3 : "";
+
 
   if (betLightEl) {
     betLightEl.className = "bet-light";

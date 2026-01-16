@@ -115,3 +115,23 @@ body{
   border-color: rgba(70,230,255,.28);
   box-shadow: 0 0 0 3px rgba(70,230,255,.10);
 }
+
+/* ===============================
+   桌機版：放大分析依據結果文字
+   跑牌結果 / 矩陣結果
+================================ */
+
+#runLine,
+#matrixLine{
+  font-size: 16px;     /* 桌機清楚可讀 */
+  font-weight: 900;    /* 明顯加粗 */
+  letter-spacing: .8px;
+}
+
+/* ✅ 桌機版：放大分析依據左側標籤（紅框：跑牌結果/矩陣結果） */
+.result-panel .analysis-row .k{
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  color: rgba(233,238,252,.85);
+}
