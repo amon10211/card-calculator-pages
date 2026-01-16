@@ -91,16 +91,10 @@ export function renderResult(runResult, matrixResult, betSuggestion) {
   // ===== 第二層：分析收合 =====
   safeSetText("analysisBrief", `跑牌：${runFinal}｜矩陣：${matrixFinal}`);
 
-  const runTag = runResult?.flipped ? "（翻邊）" : "";
-  safeSetText("runLine", `${runFinal}${runTag}`);
-  safeSetClass("runLine",
-    runFinal === "莊" ? "text-banker" : runFinal === "閒" ? "text-player" : "",
-    ["text-banker", "text-player"]
-  );
+  // ✅ 右側結果只顯示「莊 / 閒」，不顯示括號資訊
+  safeSetText("runLine", runFinal);
+  safeSetText("matrixLine", matrixFinal);
 
-  const pol = Number(matrixResult?.polarity || 0);
-  const polTag = pol === 1 ? "（正極）" : pol === -1 ? "（負極）" : "";
-  safeSetText("matrixLine", `${matrixFinal}${polTag}`);
   safeSetClass("matrixLine",
     matrixFinal === "莊" ? "text-banker" : matrixFinal === "閒" ? "text-player" : "",
     ["text-banker", "text-player"]
