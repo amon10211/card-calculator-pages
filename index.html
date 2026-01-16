@@ -37,23 +37,23 @@
           <span class="home-dot cyan"></span>
           <div class="home-text">
             <div class="t">依序輸入 6 張牌（閒、閒、莊、莊、閒、莊）</div>
-            <div class="d">無補牌就按 <span class="kbd cyan">不補牌</span> 補滿格子。</div>
+            <div class="d">無補牌直接按「不補牌」</div>
           </div>
         </div>
 
         <div class="home-item">
           <span class="home-dot gold"></span>
           <div class="home-text">
-            <div class="t">輸入滿會自動計算：跑牌值／矩陣／下注建議</div>
-            <div class="d">下注建議含：一致門檻、信心星等、控注提示。</div>
+            <div class="t">輸入滿會自動分析：下注建議</div>
+            <div class="d">點選「分析依據」可查看跑牌與矩陣細節</div>
           </div>
         </div>
 
         <div class="home-item">
           <span class="home-dot blue"></span>
           <div class="home-text">
-            <div class="t">統計只算「真的下注」</div>
-            <div class="d">命中率＋盤況（近 10 把）。</div>
+            <div class="t">重置與統計說明</div>
+            <div class="d">「重置」只清牌局，「重置統計」才會清命中紀錄</div>
           </div>
         </div>
       </div>
@@ -66,7 +66,9 @@
         <button class="home-btn" id="startBtn">開始 →</button>
       </div>
 
-      <div class="home-tip">小提醒：按 <span class="kbd">Esc</span> 也可直接進入主畫面。</div>
+      <div class="home-tip">
+        小提醒：按 <span class="kbd">Esc</span> 也可直接進入主畫面。
+      </div>
     </div>
   </div>
 
@@ -92,10 +94,12 @@
           <div class="k">跑牌結果</div>
           <div class="v" id="runLine">—</div>
         </div>
+
         <div class="analysis-row">
           <div class="k">矩陣結果</div>
           <div class="v" id="matrixLine">—</div>
         </div>
+
         <!--
         <div class="analysis-row">
           <div class="k">一致判斷</div>
@@ -160,6 +164,7 @@
           <div class="t">已下注局數</div>
           <div class="n cyan" id="betCountMenu">0</div>
         </div>
+
         <div class="menu-stat">
           <div class="t">命中次數</div>
           <div class="n blue" id="hitCountMenu">0</div>
@@ -190,7 +195,6 @@
       <div class="rate" id="hitRate">命中率：—</div>
       <div class="phase" id="phase">盤況：—</div>
 
-      <!-- ✅ 桌機門檻下拉：改成手機 menu-select 風格 -->
       <div class="threshold-row">
         <div class="threshold-label">門檻（設定幾把一致才下注）</div>
         <select id="thresholdSelect" class="menu-select desktop-threshold">
@@ -207,26 +211,28 @@
 
   <!-- 首頁控制 -->
   <script>
-    (function(){
+    (function () {
       const KEY = "roadmind_skip_home_v1";
       const body = document.body;
       const startBtn = document.getElementById("startBtn");
       const rememberSkip = document.getElementById("rememberSkip");
 
-      try{
-        if(localStorage.getItem(KEY) === "1"){
+      try {
+        if (localStorage.getItem(KEY) === "1") {
           rememberSkip.checked = true;
           body.classList.remove("is-home");
         }
-      }catch(e){}
+      } catch (e) {}
 
-      startBtn.addEventListener("click", ()=>{
-        try{ localStorage.setItem(KEY, rememberSkip.checked ? "1" : "0"); }catch(e){}
+      startBtn.addEventListener("click", () => {
+        try {
+          localStorage.setItem(KEY, rememberSkip.checked ? "1" : "0");
+        } catch (e) {}
         body.classList.remove("is-home");
       });
 
-      window.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape") body.classList.remove("is-home");
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") body.classList.remove("is-home");
       });
     })();
   </script>
