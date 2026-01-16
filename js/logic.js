@@ -114,9 +114,9 @@ function adviceByThreshold(confidence, threshold){
   const t = Number(threshold || 2);
 
   if(t === 1){
-    if(confidence >= 3) return "激進模式：可試追，但務必縮注/設停損";
-    if(confidence === 2) return "激進模式：小注試跟（不加注）";
-    return "激進模式：保守觀察（等更明顯再出手）";
+    if(confidence >= 3) return "可試追，但務必縮注/設停損";
+    if(confidence === 2) return "小注試跟（不加注）";
+    return "保守觀察（等更明顯再出手）";
   }
 
   if(t === 2){
