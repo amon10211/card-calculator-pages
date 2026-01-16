@@ -217,6 +217,25 @@ button:active{ transform: translateY(1px) scale(.99); }
   color: rgba(233,238,252,.92);
 }
 
+/* 分析依據整體放大 */
+.analysis summary .sum-title{
+  font-size: 16px;
+}
+
+.analysis summary .sum-brief{
+  font-size: 14px;
+}
+
+.analysis-row .k{
+  font-size: 14px;
+}
+
+.analysis-row .v{
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: .6px;
+}
+
 .sum-brief{
   font-size: 12px;
   color: rgba(233,238,252,.66);
@@ -478,3 +497,16 @@ body.is-home .home-overlay{ display:flex; }
 .home-actions input[type="checkbox"]{ width:18px; height:18px; accent-color:#46e6ff; }
 .home-btn{ padding: 10px 16px; border-radius: 16px; }
 .home-tip{ margin-top: 10px; font-size: 12px; color: rgba(233,238,252,.62); }
+
+/* 下拉選單文字顏色加深 */
+select,
+select option{
+  color: #e9eefc;          /* 主字色 */
+  background-color: #0b0d14;
+  font-weight: 900;
+}
+
+/* iOS / Chrome focus */
+select:focus{
+  color: #ffffff;
+}
