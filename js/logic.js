@@ -1,3 +1,4 @@
+// js/logic.js
 const order = ["P","P","B","B","P","B"]; // 閒閒莊莊閒莊
 const values = { A:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:0, J:0, Q:0, K:0 };
 const PUBLIC_SET = new Set(["10","J","Q","K"]);
@@ -108,40 +109,32 @@ function starText(level){
 }
 
 /**
- * 🧠 不同門檻套不同控注建議（同星等，門檻越低越嚴格控注）
+ * ✅ 達門檻後（真的要下注時）依信心給控注建議
  */
-function adviceByThreshold(confidence, threshold){
-  const t = Number(threshold || 2);
+function betAdviceByConfidence(confidence){
+  if(confidence >= 3) return "可追 + 可加注 1 段";
+  if(confidence === 2) return "可連續跟，但不加注";
+  if(confidence === 1) return "只跟 1 把，輸就停";
+  return "不建議出手";
+}
 
-  if(t === 1){
-    if(confidence >= 3) return "可試追，但務必縮注/設停損";
-    if(confidence === 2) return "小注試跟（不加注）";
-    return "保守觀察（等更明顯再出手）";
-  }
-
-  if(t === 2){
-    if(confidence >= 3) return "可追（照策略控注）";
-    if(confidence === 2) return "小注試跟";
-    return "保守觀察";
-  }
-
-  if(t === 3){
-    if(confidence >= 3) return "偏保守：可跟（建議不加注/慢跟）";
-    if(confidence === 2) return "偏保守：小小注試跟";
-    return "偏保守：觀察為主";
-  }
-
-  if(confidence >= 3) return "極保守：可跟（僅固定小注）";
-  if(confidence === 2) return "極保守：試跟一把就回觀察";
-  return "極保守：先不出手";
+/**
+ * ✅ 未達門檻時（觀察中）給提示（不會用在已達門檻的 BET）
+ */
+function waitAdvice(confidence){
+  if(confidence >= 2) return "觀察中：方向有出來，等達門檻再出手";
+  if(confidence === 1) return "觀察中：先讓樣本多一點再決定";
+  return "衝突/無方向：不下注";
 }
 
 /**
  * ✅ 下注建議（含：門檻 + 信心等級 + 三行 meta）
  * ✅ 🔒 門檻=1 時自動降信心 1 星
- * ✅ 🧠 不同門檻套不同控注建議
+ * ✅ 🧠 信心加入「命中率(近10把)」加權：順盤加 1、震盪扣 1
+ *
+ * @param recentRate 近 N 把命中率（0~1），沒有資料可傳 null
  */
-export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, threshold){
+export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, threshold, recentRate){
   const runFinal = runResult?.final;
   const matrixFinal = matrixResult?.final;
 
@@ -165,25 +158,35 @@ export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, thr
     confidence = 0;
   }
 
+  // ✅ 命中率(近10把) 加權：順盤 +1、震盪 -1、中性 0
+  if(agreeDir && typeof recentRate === "number"){
+    if(recentRate > 0.55) confidence += 1;
+    else if(recentRate < 0.45) confidence -= 1;
+  }
+
+  // 限制在 0~3
+  confidence = Math.max(0, Math.min(3, confidence));
+
   // 🔒 門檻=1：自動降信心 1 星（最低 0）
   if(agreeDir && Number(threshold) === 1){
     confidence = Math.max(0, confidence - 1);
   }
 
-  const advice = agreeDir ? adviceByThreshold(confidence, threshold) : "衝突/無方向：不下注";
-
+  // 沒一致方向：不下注
   if(!agreeDir){
     return {
       action: "NO_BET",
       dir: null,
       text: "衝突，不下注",
-      meta: `信心：${starText(confidence)}\n${advice}`,
+      meta: `信心：${starText(confidence)}\n衝突/無方向：不下注`,
       light: "bet-orange",
       confidence
     };
   }
 
+  // ✅ 已達門檻：BET（第三行改成你指定的版本）
   if(agreeCountForDir >= threshold){
+    const advice = betAdviceByConfidence(confidence);
     return {
       action: "BET",
       dir: agreeDir,
@@ -194,6 +197,8 @@ export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, thr
     };
   }
 
+  // 未達門檻：WAIT（觀察中）
+  const advice = waitAdvice(confidence);
   return {
     action: "WAIT",
     dir: agreeDir,

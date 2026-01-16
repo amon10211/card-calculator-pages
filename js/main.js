@@ -1,3 +1,4 @@
+// js/main.js
 import {
   cards, done, betCount, hitCount,
   setPendingBet, checkHit, resetCards, resetStats,
@@ -55,12 +56,37 @@ function bindThresholdSelectMenu(){
 loadThreshold();
 
 /* 牌圖 */
+// js/main.js（把原本的 cardImgUrl 整段換成這個）
 function cardImgUrl(v){
-  const map = {
-    A:"AS", 2:"2S", 3:"3S", 4:"4S", 5:"5S", 6:"6S", 7:"7S",
-    8:"8S", 9:"9S", 10:"0S", J:"JS", Q:"QS", K:"KS"
+  const rankMap = {
+    A: "A",
+    2: "2",
+    3: "3",
+    4: "4",
+    5: "5",
+    6: "6",
+    7: "7",
+    8: "8",
+    9: "9",
+    10: "0",
+    J: "J",
+    Q: "Q",
+    K: "K"
   };
-  return `https://deckofcardsapi.com/static/img/${map[v]}.png`;
+
+  // ✅ 用 1~13 判斷奇偶：A=1, J=11, Q=12, K=13
+  let num;
+  if (String(v) === "A") num = 1;
+  else if (String(v) === "J") num = 11;
+  else if (String(v) === "Q") num = 12;
+  else if (String(v) === "K") num = 13;
+  else num = Number(v);
+
+  // ✅ 偶數 -> 紅心 H；奇數 -> 黑桃 S
+  const suit = (num % 2 === 0) ? "H" : "S";
+
+  const r = rankMap[v];
+  return `https://deckofcardsapi.com/static/img/${r}${suit}.png`;
 }
 
 function getPhaseText(){
@@ -146,7 +172,10 @@ function settleRound(){
   // 取得該方向累積一致次數
   const agreeCountForDir = agreeDir ? getAgreeCount(agreeDir) : 0;
 
-  const betSuggestion = calcBetSuggestion(runResult, matrixResult, agreeCountForDir, THRESHOLD);
+  // ✅ 把「近10把命中率」傳進信心計算（可能是 null）
+  const recentRate = getRecentRate();
+
+  const betSuggestion = calcBetSuggestion(runResult, matrixResult, agreeCountForDir, THRESHOLD, recentRate);
   renderResult(runResult, matrixResult, betSuggestion);
 
   // 用本把結果驗證上一把
