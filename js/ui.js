@@ -118,19 +118,22 @@ export function renderResult(runResult, matrixResult, betSuggestion) {
   );
 }
 
-export function renderStats(betCount, hitCount, phaseText) {
-  // 桌機 / 舊區塊
-  safeSetText("betCount", String(betCount));
+export function renderStats(hitCount, recentRate, phaseText) {
+  // 命中次數
   safeSetText("hitCount", String(hitCount));
-
-  const rate = betCount > 0 ? ((hitCount / betCount) * 100).toFixed(1) : null;
-  safeSetText("hitRate", rate ? `命中率：${rate}%` : "命中率：—");
-  safeSetText("phase", phaseText || "盤況：—");
-
-  // ☰ 選單同步
-  safeSetText("betCountMenu", String(betCount));
   safeSetText("hitCountMenu", String(hitCount));
-  safeSetText("hitRateMenu", rate ? `命中率：${rate}%` : "命中率：—");
+
+  // 命中率（改成：近 10 把）
+  const rateText =
+    (typeof recentRate === "number")
+      ? `命中率(近10把)：${(recentRate * 100).toFixed(1)}%`
+      : "命中率(近10把)：—";
+
+  safeSetText("hitRate", rateText);
+  safeSetText("hitRateMenu", rateText);
+
+  // 盤況
+  safeSetText("phase", phaseText || "盤況：—");
   safeSetText("phaseMenu", phaseText || "盤況：—");
 }
 

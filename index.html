@@ -149,22 +149,6 @@
         <button class="menu-close" id="menuCloseBtn" aria-label="關閉">✕</button>
       </div>
 
-      <div class="menu-section">
-        <div class="menu-label">門檻（設定幾把一致才下注）</div>
-        <select id="thresholdSelectMenu" class="menu-select">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </div>
-
-      <div class="menu-section menu-stats">
-        <div class="menu-stat">
-          <div class="t">已下注局數</div>
-          <div class="n cyan" id="betCountMenu">0</div>
-        </div>
-
         <div class="menu-stat">
           <div class="t">命中次數</div>
           <div class="n blue" id="hitCountMenu">0</div>
@@ -185,25 +169,10 @@
   <!-- 右：統計（桌機用；手機用 mobile.css 隱藏） -->
   <aside class="stats-right" id="statsRight">
     <div class="panel">
-      <div class="panel-title">已下注局數</div>
-      <div class="panel-value cyan" id="betCount">0</div>
-    </div>
-
-    <div class="panel">
       <div class="panel-title">命中次數</div>
       <div class="panel-value blue" id="hitCount">0</div>
       <div class="rate" id="hitRate">命中率：—</div>
       <div class="phase" id="phase">盤況：—</div>
-
-      <div class="threshold-row">
-        <div class="threshold-label">門檻（設定幾把一致才下注）</div>
-        <select id="thresholdSelect" class="menu-select desktop-threshold">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </div>
 
       <button class="reset-shared" id="resetStatsBtn">重置統計</button>
     </div>

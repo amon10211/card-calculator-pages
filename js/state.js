@@ -2,7 +2,6 @@ export const cards = [];
 export const done = { value: false };
 
 /* 統計（累積） */
-export const betCount = { value: 0 };
 export const hitCount = { value: 0 };
 
 /* 盤況（近 N 把命中紀錄；只記「有下注且本把不是和」） */
@@ -41,8 +40,6 @@ export function checkHit(actualWinner){
   // 上一把沒真的下注：不算
   if(pendingBet !== "莊" && pendingBet !== "閒") return;
 
-  betCount.value += 1;
-
   const hit = (actualWinner === pendingBet);
   if(hit) hitCount.value += 1;
 
@@ -63,7 +60,6 @@ export function resetCards(){
 }
 
 export function resetStats(){
-  betCount.value = 0;
   hitCount.value = 0;
   pendingBet = null;
   recentHits.length = 0;

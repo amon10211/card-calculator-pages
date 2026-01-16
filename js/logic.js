@@ -109,32 +109,12 @@ function starText(level){
 }
 
 /**
- * ✅ 達門檻後（真的要下注時）依信心給控注建議
- */
-function betAdviceByConfidence(confidence){
-  if(confidence >= 3) return "可追 + 可加注 1 段";
-  if(confidence === 2) return "可連續跟，但不加注";
-  if(confidence === 1) return "只跟 1 把，輸就停";
-  return "不建議出手";
-}
-
-/**
- * ✅ 未達門檻時（觀察中）給提示（不會用在已達門檻的 BET）
- */
-function waitAdvice(confidence){
-  if(confidence >= 2) return "觀察中：方向有出來，等達門檻再出手";
-  if(confidence === 1) return "觀察中：先讓樣本多一點再決定";
-  return "衝突/無方向：不下注";
-}
-
-/**
  * ✅ 下注建議（含：門檻 + 信心等級 + 三行 meta）
- * ✅ 🔒 門檻=1 時自動降信心 1 星
  * ✅ 🧠 信心加入「命中率(近10把)」加權：順盤加 1、震盪扣 1
  *
  * @param recentRate 近 N 把命中率（0~1），沒有資料可傳 null
  */
-export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, threshold, recentRate){
+export function calcBetSuggestion(runResult, matrixResult, recentRate){
   const runFinal = runResult?.final;
   const matrixFinal = matrixResult?.final;
 
@@ -167,11 +147,6 @@ export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, thr
   // 限制在 0~3
   confidence = Math.max(0, Math.min(3, confidence));
 
-  // 🔒 門檻=1：自動降信心 1 星（最低 0）
-  if(agreeDir && Number(threshold) === 1){
-    confidence = Math.max(0, confidence - 1);
-  }
-
   // 沒一致方向：不下注
   if(!agreeDir){
     return {
@@ -184,27 +159,15 @@ export function calcBetSuggestion(runResult, matrixResult, agreeCountForDir, thr
     };
   }
 
-  // ✅ 已達門檻：BET（第三行改成你指定的版本）
-  if(agreeCountForDir >= threshold){
-    const advice = betAdviceByConfidence(confidence);
-    return {
-      action: "BET",
-      dir: agreeDir,
-      text: agreeDir,
-      meta: `一致：${agreeDir} ${agreeCountForDir}/${threshold}\n信心：${starText(confidence)}\n${advice}`,
-      light: (agreeDir === "莊") ? "bet-red" : "bet-blue",
-      confidence
-    };
-  }
-
-  // 未達門檻：WAIT（觀察中）
-  const advice = waitAdvice(confidence);
+  // ✅ 有一致方向：直接給下注建議
+  // （你已把「門檻」功能整個拿掉，所以這裡不看一致次數，直接 BET）
+  const light = (agreeDir === "莊") ? "bet-red" : "bet-blue";
   return {
-    action: "WAIT",
+    action: "BET",
     dir: agreeDir,
-    text: `觀察中 ${agreeDir}`,
-    meta: `一致：${agreeDir} ${agreeCountForDir}/${threshold}\n信心：${starText(confidence)}\n${advice}`,
-    light: "bet-orange",
+    text: `下注：${agreeDir}`,
+    meta: `信心：${starText(confidence)}\n一致方向：${agreeDir}`,
+    light,
     confidence
   };
 }

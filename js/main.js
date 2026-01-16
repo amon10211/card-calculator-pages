@@ -1,6 +1,6 @@
 // js/main.js
 import {
-  cards, done, betCount, hitCount,
+  cards, done, hitCount,
   setPendingBet, checkHit, resetCards, resetStats,
   incAgreeCount, getAgreeCount,
   getRecentRate, RECENT_N
@@ -9,51 +9,6 @@ import {
 import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260117";
 import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260117";
 import { initButtons } from "./buttons.js?v=20260117";
-
-/* ===== 門檻設定（支援 1 / 2 / 3 / 4）===== */
-const THRESHOLD_KEY = "roadmind_threshold_v1";
-let THRESHOLD = 2;
-
-function loadThreshold(){
-  try{
-    const v = Number(localStorage.getItem(THRESHOLD_KEY));
-    if([1,2,3,4].includes(v)) THRESHOLD = v;
-  }catch(e){}
-}
-
-function bindThresholdSelect(){
-  const sel = document.getElementById("thresholdSelect");
-  if(!sel) return;
-
-  sel.value = String(THRESHOLD);
-
-  sel.addEventListener("change", ()=>{
-    const v = Number(sel.value);
-    if([1,2,3,4].includes(v)){
-      THRESHOLD = v;
-      try{ localStorage.setItem(THRESHOLD_KEY, String(v)); }catch(e){}
-      renderStats(betCount.value, hitCount.value, getPhaseText());
-    }
-  });
-}
-
-function bindThresholdSelectMenu(){
-  const sel = document.getElementById("thresholdSelectMenu");
-  if(!sel) return;
-
-  sel.value = String(THRESHOLD);
-
-  sel.addEventListener("change", ()=>{
-    const v = Number(sel.value);
-    if([1,2,3,4].includes(v)){
-      THRESHOLD = v;
-      try{ localStorage.setItem(THRESHOLD_KEY, String(v)); }catch(e){}
-      renderStats(betCount.value, hitCount.value, getPhaseText());
-    }
-  });
-}
-
-loadThreshold();
 
 /* 牌圖 */
 // js/main.js（把原本的 cardImgUrl 整段換成這個）
@@ -94,8 +49,8 @@ function getPhaseText(){
   if(r == null) return `盤況：—`;
 
   const pct = (r * 100).toFixed(0);
-  if(r < 0.45) return `盤況：⚠️反開房 建議降注/停或是反打/換房`;
-  if(r <= 0.55) return `盤況：中性 正常控注`;
+  if(r < 0.45) return `盤況：⚠️反開房 建議反打或換房`;
+  if(r <= 0.55) return `盤況：方向不明，先觀察`;
   return `盤況：🔥正開房 可正常跟`;
 }
 
@@ -144,7 +99,7 @@ export function startNewRound(){
   resetCards();
   renderCards(cards, cardImgUrl);
   resetUIKeepColon();
-  renderStats(betCount.value, hitCount.value, getPhaseText());
+ renderStats(hitCount.value, getRecentRate(), getPhaseText());
 }
 
 export function settleIfReady(){
@@ -172,24 +127,28 @@ function settleRound(){
   // 取得該方向累積一致次數
   const agreeCountForDir = agreeDir ? getAgreeCount(agreeDir) : 0;
 
-  // ✅ 把「近10把命中率」傳進信心計算（可能是 null）
+    // ✅ 先抓「近10把命中率」（可能是 null）
+  //    下面 renderStats / calcBetSuggestion 都會用到
   const recentRate = getRecentRate();
 
-  const betSuggestion = calcBetSuggestion(runResult, matrixResult, agreeCountForDir, THRESHOLD, recentRate);
+  // ✅ 把「近10把命中率」傳進畫面顯示
+  renderStats(hitCount.value, recentRate, getPhaseText());
+
+  const betSuggestion = calcBetSuggestion(runResult, matrixResult, recentRate);
   renderResult(runResult, matrixResult, betSuggestion);
 
   // 用本把結果驗證上一把
   const actualWinner = getActualWinner(cards);
   checkHit(actualWinner);
 
-  // 只有真的 BET 才存 pendingBet
-  if(betSuggestion.action === "BET" && (betSuggestion.dir === "莊" || betSuggestion.dir === "閒")){
+  // 只有真的 BET 才存 pendingBet（加上 ? 避免 betSuggestion 炸掉）
+  if(betSuggestion?.action === "BET" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")){
     setPendingBet(betSuggestion.dir);
   }else{
     setPendingBet(null);
   }
 
-  renderStats(betCount.value, hitCount.value, getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText());
 }
 
 window.noDraw = function(){
@@ -218,28 +177,24 @@ window.undo = function(){
   renderCards(cards, cardImgUrl);
 
   resetUIKeepColon();
-  renderStats(betCount.value, hitCount.value, getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText());
 };
 
 window.resetAll = function(){
   resetCards();
   renderCards(cards, cardImgUrl);
   resetUIKeepColon();
-  renderStats(betCount.value, hitCount.value, getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText());
 };
 
 // 只重置統計（同時會重置「同一場一致次數」）
 window.resetStatsOnly = function(){
   resetStats();
-  renderStats(betCount.value, hitCount.value, getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText());
 };
 
 // 初始化
 initButtons();
 renderCards(cards, cardImgUrl);
 resetUIKeepColon();
-renderStats(betCount.value, hitCount.value, getPhaseText());
-
-// 綁定門檻（桌機 + ☰ 選單）
-bindThresholdSelect();
-bindThresholdSelectMenu();
+renderStats(hitCount.value, getRecentRate(), getPhaseText());
