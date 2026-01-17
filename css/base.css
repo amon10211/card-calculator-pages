@@ -468,5 +468,7 @@ select:focus{
 
 /* ✅ 命中次數：與分析依據拉開距離 */
 .stats-inline{
-  margin-top: 16px;          /* ← 上方距離加大 */
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(216, 133, 25, 0.08);
 }
