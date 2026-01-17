@@ -5,7 +5,7 @@ export const done = { value: false };
 export const hitCount = { value: 0 };
 
 /* 盤況（近 N 把命中紀錄；只記「有下注且本把不是和」） */
-export const RECENT_N = 10;
+export const RECENT_N = 20;
 export const recentHits = []; // boolean[]
 
 /* pendingBet：上一把「真的有下注」的建議，用下一把實際結果來對 */

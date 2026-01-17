@@ -126,8 +126,8 @@ export function renderStats(hitCount, recentRate, phaseText) {
   // 命中率（改成：近 10 把）
   const rateText =
     (typeof recentRate === "number")
-      ? `命中率(近10把)：${(recentRate * 100).toFixed(1)}%`
-      : "命中率(近10把)：—";
+      ? `命中率(近20把)：${(recentRate * 100).toFixed(1)}%`
+      : "命中率(近20把)：—";
 
   safeSetText("hitRate", rateText);
   safeSetText("hitRateMenu", rateText);
