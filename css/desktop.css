@@ -56,25 +56,6 @@ body{
 .board2 #s5{ grid-column: 2 / 3; }
 .board2 #s6{ grid-column: 3 / 4; }
 
-/* ===== 桌機隱藏手機選單 ===== */
-#menuBtn,
-#menuOverlay{ display:none !important; }
-
-/* ==================================================
-   ✅ 門檻（把一致才下注）
-   下拉選單：放在標題裡、變短
-   ================================================== */
-
-.threshold-row{
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,.10);
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 /* 左邊文字 */
 .threshold-label{
   font-size: 15px;

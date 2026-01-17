@@ -36,7 +36,7 @@
         <div class="home-item">
           <span class="home-dot cyan"></span>
           <div class="home-text">
-            <div class="t">依序輸入 6 張牌（閒、閒、莊、莊、閒、莊）</div>
+            <div class="t">依照發牌順序輸入 6 張牌（閒、閒、莊、莊、閒、莊）</div>
             <div class="d">無補牌直接按「不補牌」</div>
           </div>
         </div>
@@ -45,15 +45,14 @@
           <span class="home-dot gold"></span>
           <div class="home-text">
             <div class="t">輸入滿會自動分析：下注建議</div>
-            <div class="d">點選「分析依據」可查看跑牌與矩陣細節</div>
           </div>
         </div>
 
         <div class="home-item">
           <span class="home-dot blue"></span>
           <div class="home-text">
-            <div class="t">重置與統計說明</div>
-            <div class="d">「重置」只清牌局，「重置統計」才會清命中紀錄</div>
+            <div class="t">重置說明</div>
+            <div class="d">「重置」清牌局跟下注建議，「重置統計」才會清命中紀錄</div>
           </div>
         </div>
       </div>
@@ -120,34 +119,9 @@
       <button id="noDrawBtn">不補牌</button>
       <button id="undoBtn">上一步</button>
       <button id="resetBtn">重置</button>
-      <button id="menuBtn" aria-label="選單">☰</button>
+      <button id="homeBtn">返回首頁</button>
     </div>
-  </main>
-
-  <!-- ✅ ☰ 選單：門檻 / 統計 / 回首頁 -->
-  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
-    <div class="menu-card" role="dialog" aria-modal="true" aria-label="設定與統計">
-      <div class="menu-head">
-        <div class="menu-title">設定 / 統計</div>
-        <button class="menu-close" id="menuCloseBtn" aria-label="關閉">✕</button>
-      </div>
-
-        <div class="menu-stat">
-          <div class="t">命中次數</div>
-          <div class="n blue" id="hitCountMenu">0</div>
-        </div>
-
-        <div class="menu-meta" id="hitRateMenu">命中率：—</div>
-        <div class="menu-meta" id="phaseMenu">盤況：—</div>
-
-        <button class="reset-shared" id="resetStatsBtnMenu">重置統計</button>
-      </div>
-
-      <div class="menu-actions">
-        <button id="goHomeBtnMenu">返回首頁</button>
-      </div>
-    </div>
-  </div>
+  </main>  
 
   <!-- 首頁控制 -->
   <script>

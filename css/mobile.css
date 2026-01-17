@@ -1,11 +1,12 @@
-/* ✅ 手機：整頁固定一屏，不滾動 */
+/* ✅ 手機：改回可滾動、由內容撐高 */
 html, body{
-  height: 100%;
-  overflow: hidden;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body{
-  height: 100svh;               /* iOS 新單位，避免工具列吃高度 */
+  height: auto;                 /* ✅ 不鎖 100svh */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -67,8 +68,8 @@ body{
   flex-direction: column;
   gap: 8px;
 
-  flex: 1 1 auto;   /* ✅ 撐滿剩餘高度 */
-  min-height: 0;    /* ✅ 允許內部縮小，不撐爆 */
+  flex: 0 0 auto;   /* ✅ 讓內容撐高 */
+  min-height: auto; /* ✅ 不要 min-height:0 */
 }
 
 /* 牌面：縮間距 + 牌框高度跟螢幕綁定 */

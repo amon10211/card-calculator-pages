@@ -36,19 +36,13 @@ export function initButtons(){
   const resetBtn = document.getElementById("resetBtn");
   if(resetBtn) resetBtn.addEventListener("click", ()=> window.resetAll());
 
+  const homeBtn = document.getElementById("homeBtn");
+  if(homeBtn){
+    homeBtn.addEventListener("click", ()=>{
+      document.body.classList.add("is-home");
+    });
+  }
+
   const rs = document.getElementById("resetStatsBtn");
   if(rs) rs.addEventListener("click", ()=> window.resetStatsOnly());
-
-  // ☰ 選單（手機主用）
-  const menuBtn = document.getElementById("menuBtn");
-  if(menuBtn) menuBtn.addEventListener("click", ()=> window.toggleMenu(true));
-
-  const menuCloseBtn = document.getElementById("menuCloseBtn");
-  if(menuCloseBtn) menuCloseBtn.addEventListener("click", ()=> window.toggleMenu(false));
-
-  const resetStatsBtnMenu = document.getElementById("resetStatsBtnMenu");
-  if(resetStatsBtnMenu) resetStatsBtnMenu.addEventListener("click", ()=> window.resetStatsOnly());
-
-  const goHomeBtnMenu = document.getElementById("goHomeBtnMenu");
-  if(goHomeBtnMenu) goHomeBtnMenu.addEventListener("click", ()=> window.goHome());
 }

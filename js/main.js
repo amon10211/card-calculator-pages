@@ -54,42 +54,6 @@ function getPhaseText(){
   return `盤況：🔥正開房 可正常跟`;
 }
 
-/* =========================
-   ✅ 先把手機選單功能掛到 window（避免慢機點了沒反應）
-========================= */
-window.toggleMenu = function(show){
-  const overlay = document.getElementById("menuOverlay");
-  if(!overlay) return;
-
-  if(show){
-    overlay.classList.add("show");
-    overlay.setAttribute("aria-hidden", "false");
-  }else{
-    overlay.classList.remove("show");
-    overlay.setAttribute("aria-hidden", "true");
-  }
-};
-
-window.goHome = function(){
-  window.toggleMenu(false);
-  document.body.classList.add("is-home");
-};
-
-// 點遮罩關閉
-const menuOverlay = document.getElementById("menuOverlay");
-if(menuOverlay){
-  menuOverlay.addEventListener("click", (e)=>{
-    if(e.target === menuOverlay) window.toggleMenu(false);
-  });
-}
-
-// ESC 關閉選單（不影響首頁 ESC 進入）
-window.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") window.toggleMenu(false);
-});
-
-/* ========================= */
-
 export function onInputChanged(){
   renderCards(cards, cardImgUrl);
 }
