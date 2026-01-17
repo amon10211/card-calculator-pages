@@ -171,3 +171,72 @@ export function resetUIKeepColon() {
   const details = document.getElementById("analysisDetails");
   if (details && details.open) details.open = false;
 }
+
+export function renderHistory(historyRounds, maxN){
+  const pairs = [
+    {
+      listId: "historyListDesktop",
+      countId: "historyCountDesktop"
+    },
+    {
+      listId: "historyListMobile",
+      countId: "historyCountMobile"
+    }
+  ];
+
+  pairs.forEach(({ listId, countId })=>{
+    const listEl = document.getElementById(listId);
+    const countEl = document.getElementById(countId);
+
+    if(countEl) countEl.innerText = `(${historyRounds.length}/${maxN})`;
+    if(!listEl) return;
+
+    // 清空
+    listEl.innerHTML = "";
+
+    // 新的在上面（你也可以改成舊的在上）
+    const arr = [...historyRounds].slice().reverse();
+
+    arr.forEach(item=>{
+      const wrap = document.createElement("div");
+      const cls = item.hit ? "history-hit" : "history-miss";
+      wrap.className = `history-item ${cls}`;
+
+      const left = document.createElement("div");
+      left.className = "history-left";
+
+      const round = document.createElement("div");
+      round.className = "history-round";
+      round.innerText = `第 ${item.round} 局`;
+
+      const line1 = document.createElement("div");
+      line1.className = "history-line";
+      line1.innerText = `建議：下注 ${item.suggestion}`;
+
+      const line2 = document.createElement("div");
+      line2.className = "history-line";
+      line2.innerText = `結果：開 ${item.actual}`;
+
+      left.appendChild(round);
+      left.appendChild(line1);
+      left.appendChild(line2);
+
+      const badge = document.createElement("div");
+      badge.className = "history-badge";
+
+      const dot = document.createElement("span");
+      dot.className = "history-dot";
+
+      const text = document.createElement("span");
+      text.innerText = item.hit ? "準" : "不準";
+
+      badge.appendChild(dot);
+      badge.appendChild(text);
+
+      wrap.appendChild(left);
+      wrap.appendChild(badge);
+
+      listEl.appendChild(wrap);
+    });
+  });
+}

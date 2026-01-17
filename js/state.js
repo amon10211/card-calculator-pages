@@ -11,6 +11,13 @@ export const recentHits = []; // boolean[]
 /* pendingBet：上一把「真的有下注」的建議，用下一把實際結果來對 */
 let pendingBet = null; // "莊" | "閒" | null
 
+/* =========================
+   歷史牌局（只記「有下注且非和」）
+   最多 20 局
+========================= */
+export const HISTORY_N = 20;
+export const historyRounds = []; // { round, suggestion, actual, hit }[]
+
 /* ✅ 改成「同一場累積一致次數」（不用連續） */
 export const agreeCounts = { "莊": 0, "閒": 0 };
 
@@ -34,18 +41,37 @@ export function resetAgreeCounts(){
 }
 
 export function checkHit(actualWinner){
-  // 本把是和：不算
-  if(actualWinner === "和") return;
+  // 上一把沒真的下注：不算（也不寫歷史）
+  if(pendingBet !== "莊" && pendingBet !== "閒") return null;
 
-  // 上一把沒真的下注：不算
-  if(pendingBet !== "莊" && pendingBet !== "閒") return;
+  // ✅ 開和：命中率不算，但歷史要記（hit = null）
+  if(actualWinner === "和"){
+    historyRounds.push({
+      round: historyRounds.length + 1,
+      suggestion: pendingBet,
+      actual: actualWinner,
+      hit: null
+    });
+    if(historyRounds.length > HISTORY_N) historyRounds.shift();
+    return null;
+  }
 
+  // 只有 莊/閒 才算命中
   const hit = (actualWinner === pendingBet);
   if(hit) hitCount.value += 1;
 
-  // 近 N 把
   recentHits.push(hit);
   if(recentHits.length > RECENT_N) recentHits.shift();
+
+  historyRounds.push({
+    round: historyRounds.length + 1,
+    suggestion: pendingBet,
+    actual: actualWinner,
+    hit
+  });
+  if(historyRounds.length > HISTORY_N) historyRounds.shift();
+
+  return hit;
 }
 
 export function getRecentRate(){
@@ -66,4 +92,7 @@ export function resetStats(){
 
   // ✅ 重置「同一場一致次數」
   resetAgreeCounts();
+
+  // ✅ 歷史（只記有下注的）也清掉
+  historyRounds.length = 0;
 }

@@ -81,7 +81,7 @@
       <div class="bet-light" id="betLight"></div>
     </div>
 
-   <!-- ✅ 分析依據：只顯示一行（不摺疊） -->
+   <!-- ✅ 分析依據 -->
    <div class="analysis-line" id="analysisLine">
      <span class="sum-title">分析依據</span>
      <span class="sum-brief" id="analysisBrief">跑牌：—｜矩陣：—</span>
@@ -96,6 +96,7 @@
 
       <button class="reset-shared" id="resetStatsBtn">重置統計</button>
     </div>
+    
   </aside>
 
   <!-- 中：主操作 -->
@@ -123,6 +124,24 @@
     </div>
   </main>  
 
+  <!-- ✅ 桌機：牌局紀錄（右側第三欄） -->
+  <aside class="history-right" id="historyPanelDesktop">
+    <div class="history-head">
+      <div class="history-title">牌局紀錄 <span class="history-count" id="historyCountDesktop">(0/20)</span></div>
+      <button class="history-clear" id="historyClearDesktop" type="button">清空</button>
+    </div>
+    <div class="history-list" id="historyListDesktop"></div>
+  </aside>
+
+    <!-- ✅ 手機：牌局紀錄（整頁最底部） -->
+    <section class="panel history-panel" id="historyPanelMobile">
+      <div class="history-head">
+        <div class="history-title">牌局紀錄 <span class="history-count" id="historyCountMobile">(0/20)</span></div>
+        <button class="history-clear" id="historyClearMobile" type="button">清空</button>
+      </div>
+      <div class="history-list" id="historyListMobile"></div>
+    </section>
+  
   <!-- 首頁控制 -->
   <script>
     (function () {

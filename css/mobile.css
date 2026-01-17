@@ -144,3 +144,12 @@ body{
 @media (max-width: 360px){
   .ops{ grid-template-columns: repeat(2, 1fr); }
 }
+
+/* 手機：顯示手機歷史、隱藏桌機歷史 */
+#historyPanelDesktop{ display:none; }
+
+/* 手機：確保在整頁最底部，看起來像「結尾區」 */
+#historyPanelMobile{
+  margin-top: 8px;
+  margin-bottom: calc(10px + var(--safe-bottom));
+}

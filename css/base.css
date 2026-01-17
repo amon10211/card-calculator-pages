@@ -356,3 +356,92 @@ select:focus{
   padding-top: 14px;
   border-top: 1px solid rgba(216, 133, 25, 0.08);
 }
+
+/* =========================
+   歷史牌局（第1層）
+========================= */
+.history-panel{ margin-top: 12px; }
+
+.history-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.history-title{
+  font-weight: 950;
+  letter-spacing: .6px;
+  color: rgba(233,238,252,.92);
+}
+
+.history-count{
+  font-size: 12px;
+  color: rgba(233,238,252,.62);
+  margin-left: 6px;
+}
+
+.history-clear{
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+.history-list{
+  display:flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item{
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  padding: 10px 10px;
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.history-left{ min-width: 0; }
+.history-round{
+  font-weight: 950;
+  letter-spacing: .4px;
+  font-size: 14px;
+}
+.history-line{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(233,238,252,.74);
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.history-badge{
+  flex: 0 0 auto;
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  font-weight: 950;
+  font-size: 12px;
+}
+
+.history-dot{
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 10px 18px rgba(0,0,0,.35);
+}
+
+/* 命中 / 未中 */
+.history-hit .history-dot{ background: rgba(44, 200, 120, .95); }
+.history-miss .history-dot{ background: rgba(255, 77, 93, .95); }
+.history-hit .history-badge{ color: rgba(44, 200, 120, .95); }
+.history-miss .history-badge{ color: rgba(255, 77, 93, .95); }

@@ -1,13 +1,13 @@
-// js/main.js
 import {
   cards, done, hitCount,
   setPendingBet, checkHit, resetCards, resetStats,
   incAgreeCount, getAgreeCount,
-  getRecentRate, RECENT_N
+  getRecentRate, RECENT_N,
+  historyRounds, HISTORY_N
 } from "./state.js?v=20260117";
 
 import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260117";
-import { renderCards, renderResult, renderStats, resetUIKeepColon } from "./ui.js?v=20260117";
+import { renderCards, renderResult, renderStats, resetUIKeepColon, renderHistory } from "./ui.js?v=20260117";
 import { initButtons } from "./buttons.js?v=20260117";
 
 /* 牌圖 */
@@ -113,6 +113,7 @@ function settleRound(){
   }
 
   renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  renderHistory(historyRounds, HISTORY_N);
 }
 
 window.noDraw = function(){
@@ -162,3 +163,17 @@ initButtons();
 renderCards(cards, cardImgUrl);
 resetUIKeepColon();
 renderStats(hitCount.value, getRecentRate(), getPhaseText());
+renderHistory(historyRounds, HISTORY_N);
+
+function bindHistoryClear(){
+  const ids = ["historyClearDesktop", "historyClearMobile"];
+  ids.forEach(id=>{
+    const b = document.getElementById(id);
+    if(!b) return;
+    b.addEventListener("click", ()=>{
+      window.resetStatsOnly();           // 會清命中率 + 歷史
+      renderHistory(historyRounds, HISTORY_N);
+    });
+  });
+}
+bindHistoryClear();
