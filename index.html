@@ -82,38 +82,21 @@
       <div class="bet-light" id="betLight"></div>
     </div>
 
-    <!-- 第二層：分析確認（預設收合） -->
-    <details class="analysis" id="analysisDetails">
-      <summary>
-        <span class="sum-title">分析依據</span>
-        <span class="sum-brief" id="analysisBrief">跑牌：—｜矩陣：—</span>
-      </summary>
+   <!-- ✅ 分析依據：只顯示一行（不摺疊） -->
+   <div class="analysis-line" id="analysisLine">
+     <span class="sum-title">分析依據</span>
+     <span class="sum-brief" id="analysisBrief">跑牌：—｜矩陣：—</span>
+   </div>
 
-      <div class="analysis-body">
-        <div class="analysis-row">
-          <div class="k">跑牌結果</div>
-          <div class="v" id="runLine">—</div>
-        </div>
+   <!-- 右：統計（桌機用；手機用 mobile.css 隱藏） -->
+    <div class="panel stats-inline">
+      <div class="panel-title">命中次數</div>
+      <div class="panel-value blue" id="hitCount">0</div>
+      <div class="rate" id="hitRate">命中率：—</div>
+      <div class="phase" id="phase">盤況：—</div>
 
-        <div class="analysis-row">
-          <div class="k">矩陣結果</div>
-          <div class="v" id="matrixLine">—</div>
-        </div>
-
-        <!--
-        <div class="analysis-row">
-          <div class="k">一致判斷</div>
-          <div class="v" id="agreeLine">—</div>
-        </div>
-        -->
-
-        <!-- 兼容：保留舊 id，避免既有程式找不到 -->
-        <div class="info" id="runInfo" style="display:none"></div>
-        <div class="info" id="matrixInfo" style="display:none"></div>
-        <div class="result-line" id="runFinal" style="display:none">結果：—</div>
-        <div class="result-line" id="matrixFinal" style="display:none">結果：—</div>
-      </div>
-    </details>
+      <button class="reset-shared" id="resetStatsBtn">重置統計</button>
+    </div>
   </aside>
 
   <!-- 中：主操作 -->
@@ -165,18 +148,6 @@
       </div>
     </div>
   </div>
-
-  <!-- 右：統計（桌機用；手機用 mobile.css 隱藏） -->
-  <aside class="stats-right" id="statsRight">
-    <div class="panel">
-      <div class="panel-title">命中次數</div>
-      <div class="panel-value blue" id="hitCount">0</div>
-      <div class="rate" id="hitRate">命中率：—</div>
-      <div class="phase" id="phase">盤況：—</div>
-
-      <button class="reset-shared" id="resetStatsBtn">重置統計</button>
-    </div>
-  </aside>
 
   <!-- 首頁控制 -->
   <script>

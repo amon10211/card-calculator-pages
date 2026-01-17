@@ -135,12 +135,12 @@ button:active{ transform: translateY(1px) scale(.99); }
   gap: 10px;
 }
 
-.panel-title{ font-size: 13px; letter-spacing: .6px; color: rgba(233,238,252,.72); font-weight: 900; }
+.panel-title{ font-size: 15px; letter-spacing: .6px; color: rgba(233,238,252,.72); font-weight: 900; }
 .panel-value{ font-size: 34px; font-weight: 950; margin-top: 8px; }
 .panel-value.cyan{ color: rgba(70,230,255,.95); }
 .panel-value.blue{ color: rgba(58,166,255,.95); }
-.rate{ margin-top: 8px; color: rgba(233,238,252,.78); font-size: 13px; }
-.phase{ margin-top: 6px; color: rgba(233,238,252,.70); font-size: 12px; line-height: 1.55; }
+.rate{ margin-top: 8px; color: rgba(233,238,252,.78); font-size: 15px; }
+.phase{ margin-top: 6px; color: rgba(233,238,252,.70); font-size: 15px; line-height: 1.55; }
 
 .reset-shared{
   width:100%;
@@ -193,85 +193,38 @@ button:active{ transform: translateY(1px) scale(.99); }
   top: 12px;
 }
 
-.analysis{
+/* ✅ 分析依據：只顯示一行（手機/桌機共用） */
+.analysis-line{
   margin-top: 10px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,.10);
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  overflow:hidden;
-}
+  padding: 12px 12px;
 
-.analysis summary{
-  list-style:none;
-  cursor:pointer;
   display:flex;
   align-items:center;
   justify-content: space-between;
   gap: 10px;
-  padding: 12px 12px;
-  user-select:none;
-}
-.analysis summary::-webkit-details-marker{ display:none; }
 
-.sum-title{
+  overflow:hidden;
+}
+
+.analysis-line .sum-title{
   font-weight: 950;
   letter-spacing: .6px;
   color: rgba(233,238,252,.92);
-}
-
-/* 分析依據整體放大 */
-.analysis summary .sum-title{
   font-size: 16px;
+  white-space: nowrap;
 }
 
-.analysis summary .sum-brief{
+.analysis-line .sum-brief{
   font-size: 14px;
-}
-
-.analysis-row .k{
-  font-size: 14px;
-}
-
-.analysis-row .v{
-  font-size: 16px;
-  font-weight: 950;
-  letter-spacing: .6px;
-}
-
-.sum-brief{
-  font-size: 12px;
   color: rgba(233,238,252,.66);
+
   white-space: nowrap;
   overflow:hidden;
   text-overflow: ellipsis;
-  max-width: 62%;
-}
-
-.analysis-body{
-  padding: 10px 12px 12px;
-  border-top: 1px solid rgba(255,255,255,.08);
-}
-
-.analysis-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-}
-
-.analysis-row .k{
-  font-size: 12px;
-  color: rgba(233,238,252,.62);
-  letter-spacing: .4px;
-  flex: 0 0 auto;
-}
-
-.analysis-row .v{
-  font-size: 13px;
-  color: rgba(233,238,252,.88);
-  text-align:right;
-  white-space: nowrap;
+  max-width: 70%;
 }
 
 /* ==================================================
@@ -511,4 +464,9 @@ select option{
 /* iOS / Chrome focus */
 select:focus{
   color: #ffffff;
+}
+
+/* ✅ 命中次數：與分析依據拉開距離 */
+.stats-inline{
+  margin-top: 16px;          /* ← 上方距離加大 */
 }
