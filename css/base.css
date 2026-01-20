@@ -445,3 +445,16 @@ select:focus{
 .history-miss .history-dot{ background: rgba(255, 77, 93, .95); }
 .history-hit .history-badge{ color: rgba(44, 200, 120, .95); }
 .history-miss .history-badge{ color: rgba(255, 77, 93, .95); }
+
+#phase, #phaseMenu{
+  white-space: pre-line;
+}
+
+/* 單靴盈虧顏色（只影響數字） */
+.u-plus {
+  color: #3fd27f; /* 綠 */
+}
+
+.u-minus {
+  color: #ff5c5c; /* 紅 */
+}

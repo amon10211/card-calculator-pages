@@ -1,4 +1,3 @@
-// js/logic.js
 const order = ["P","P","B","B","P","B"]; // 閒閒莊莊閒莊
 const values = { A:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:0, J:0, Q:0, K:0 };
 const PUBLIC_SET = new Set(["10","J","Q","K"]);
@@ -114,7 +113,80 @@ function starText(level){
  *
  * @param recentRate 近 N 把命中率（0~1），沒有資料可傳 null
  */
-export function calcBetSuggestion(runResult, matrixResult, recentRate){
+export function calcBetSuggestion(runResult, matrixResult, recentRate, ctx = {}) {
+  // ===== 單靴節奏 Gate（優先於其他一切）=====
+  const shoeUnits = Number(ctx.shoeUnits || 0);
+  const cooldownLeft = Number(ctx.cooldownLeft || 0);
+
+  if (cooldownLeft > 0) {
+    return {
+      action: "NO_BET",
+      dir: null,
+      unit: 0,
+      text: "冷卻中，不下注",
+      meta: `信心：—\n冷卻剩 ${cooldownLeft} 把｜先觀察`,
+      light: "bet-orange",
+      confidence: 0,
+      reason: "COOLDOWN"
+    };
+  }
+
+  if (shoeUnits <= -10) {
+    return {
+      action: "NO_BET",
+      dir: null,
+      unit: 0,
+      text: "達止損，不下注",
+      meta: `信心：—\n單靴 ${shoeUnits}u ≤ -10u｜建議換靴`,
+      light: "bet-orange",
+      confidence: 0,
+      reason: "STOP_LOSS"
+    };
+  }
+
+  if (shoeUnits >= 10) {
+    return {
+      action: "NO_BET",
+      dir: null,
+      unit: 0,
+      text: "達止盈，不下注",
+      meta: `信心：—\n單靴 ${shoeUnits}u ≥ 10u｜建議收工`,
+      light: "bet-orange",
+      confidence: 0,
+      reason: "TAKE_PROFIT"
+    };
+  }
+
+  // ===== 記牌過濾層（先決定玩不玩）=====
+  const strength = Math.abs(Number(matrixResult?.signed || 0));
+
+  // 1️⃣ 矩陣無力度（含 diff=0）
+  if (strength === 0) {
+    return {
+      action: "NO_BET",
+      dir: null,
+      unit: 0,
+      text: "矩陣無力度，不下注",
+      meta: `信心：${starText(0)}\n矩陣差值不足｜盤型偏亂`,
+      light: "bet-orange",
+      confidence: 0
+    };
+  }
+
+  // 2️⃣ 翻邊 + 力度不足
+  if (runResult?.flipped === true && strength < 2) {
+    return {
+      action: "NO_BET",
+      dir: null,
+      unit: 0,
+      text: "翻邊弱盤，不下注",
+      meta: `信心：${starText(0)}\n翻邊｜矩陣偏弱`,
+      light: "bet-orange",
+      confidence: 0
+    };
+  }
+
+  // ===== 方向判斷 =====
   const runFinal = runResult?.final;
   const matrixFinal = matrixResult?.final;
 
@@ -123,48 +195,47 @@ export function calcBetSuggestion(runResult, matrixResult, recentRate){
       ? runFinal
       : null;
 
-  let confidence = 0;
-
-  if(agreeDir){
-    confidence = 1;
-
-    // 矩陣力度（signed 絕對值）>=2 加分
-    const strength = Math.abs(Number(matrixResult?.signed || 0));
-    if(strength >= 2) confidence += 1;
-
-    // 跑牌值沒翻邊加分
-    if(runResult?.flipped === false) confidence += 1;
-  }else{
-    confidence = 0;
-  }
-
-  // ✅ 命中率(近10把) 加權：順盤 +1、震盪 -1、中性 0
-  if(agreeDir && typeof recentRate === "number"){
-    if(recentRate > 0.55) confidence += 1;
-    else if(recentRate < 0.45) confidence -= 1;
-  }
-
-  // 限制在 0~3
-  confidence = Math.max(0, Math.min(3, confidence));
-
-  // 沒一致方向：不下注
   if(!agreeDir){
     return {
       action: "NO_BET",
       dir: null,
       text: "衝突，不下注",
-      meta: `信心：${starText(confidence)}\n衝突/無方向：不下注`,
+      meta: `信心：${starText(0)}\n衝突/無方向：不下注`,
       light: "bet-orange",
-      confidence
+      confidence: 0
     };
   }
 
-  // ✅ 有一致方向：直接給下注建議
-  // （你已把「門檻」功能整個拿掉，所以這裡不看一致次數，直接 BET）
+  // ===== 信心計算 =====
+  let confidence = 1;
+
+  if(strength >= 2) confidence += 1;
+  if(runResult?.flipped === false) confidence += 1;
+
+  if(typeof recentRate === "number"){
+    if(recentRate > 0.55) confidence += 1;
+    else if(recentRate < 0.45) confidence -= 1;
+  }
+
+  confidence = Math.max(0, Math.min(3, confidence));
+
+  // ===== 下注單位：直接顯示在建議 =====
+  let unit = 1;
+  if (confidence >= 3) unit = 3;
+  else if (confidence === 2) unit = 2;
+
+  // 盤況差保守
+  if (typeof recentRate === "number" && recentRate < 0.45) unit = 1;
+
+  // 單靴已經偏虧也保守（你可改門檻）
+  if (shoeUnits <= -6) unit = 1;
+
   const light = (agreeDir === "莊") ? "bet-red" : "bet-blue";
+
   return {
     action: "BET",
     dir: agreeDir,
+    unit,
     text: `下注：${agreeDir}`,
     meta: `信心：${starText(confidence)}\n一致方向：${agreeDir}`,
     light,

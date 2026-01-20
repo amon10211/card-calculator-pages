@@ -60,11 +60,20 @@ export function renderResult(runResult, matrixResult, betSuggestion) {
   const betLightEl = document.getElementById("betLight");
 
   let mainText = "建議：—";
-  if (betSuggestion?.action === "BET" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")) {
-    mainText = `建議下注：${betSuggestion.dir}`;
-  } else if (betSuggestion?.action === "WAIT" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")) {
-    mainText = `觀察中：${betSuggestion.dir}`;
-  } else if (betSuggestion?.action === "NO_BET") {
+
+  const action = betSuggestion && betSuggestion.action;
+  const dir = betSuggestion && betSuggestion.dir;
+
+  if (action === "BET" && (dir === "莊" || dir === "閒")) {
+    const u = Number((betSuggestion && betSuggestion.unit) || 1);
+    mainText = `建議下注：${dir} ${u}u`;
+  }
+
+  if (action === "WAIT" && (dir === "莊" || dir === "閒")) {
+    mainText = `觀察中：${dir}`;
+  }
+
+  if (action === "NO_BET") {
     mainText = "建議：不下注";
   }
 
@@ -118,23 +127,25 @@ export function renderResult(runResult, matrixResult, betSuggestion) {
   );
 }
 
-export function renderStats(hitCount, recentRate, phaseText) {
-  // 命中次數
-  safeSetText("hitCount", String(hitCount));
-  safeSetText("hitCountMenu", String(hitCount));
+export function renderStats(hitCount, recentRate, phaseData) {
+  const phaseEl = document.getElementById("phase");
+  if (!phaseEl) return;
 
-  // 命中率（改成：近 10 把）
-  const rateText =
-    (typeof recentRate === "number")
-      ? `命中率(近20把)：${(recentRate * 100).toFixed(1)}%`
-      : "命中率(近20把)：—";
+  // 兼容舊版：如果傳進來是純字串，就照舊顯示
+  if (typeof phaseData === "string") {
+    phaseEl.innerText = phaseData;
+    return;
+  }
 
-  safeSetText("hitRate", rateText);
-  safeSetText("hitRateMenu", rateText);
+  // 新版：前兩行純文字（保留換行）
+  phaseEl.innerText = phaseData?.text || "";
 
-  // 盤況
-  safeSetText("phase", phaseText || "盤況：—");
-  safeSetText("phaseMenu", phaseText || "盤況：—");
+  // 第三行：單靴（只讓數字上色）
+  if (phaseData?.unitHtml) {
+    const div = document.createElement("div");
+    div.innerHTML = phaseData.unitHtml;
+    phaseEl.appendChild(div);
+  }
 }
 
 export function resetUIKeepColon() {
@@ -211,11 +222,14 @@ export function renderHistory(historyRounds, maxN){
 
       const line1 = document.createElement("div");
       line1.className = "history-line";
-      line1.innerText = `建議：下注 ${item.suggestion}`;
+      const u = (item.unit != null) ? `${item.unit}u` : "";
+      line1.innerText = `建議：下注 ${item.suggestion} ${u}`.trim();
 
       const line2 = document.createElement("div");
       line2.className = "history-line";
-      line2.innerText = `結果：開 ${item.actual}`;
+      const d = (typeof item.delta === "number") ? item.delta : null;
+      const pnl = (d == null) ? "" : `｜盈虧：${d > 0 ? "+" : ""}${d}u`;
+      line2.innerText = `結果：開 ${item.actual}${pnl}`;
 
       left.appendChild(round);
       left.appendChild(line1);

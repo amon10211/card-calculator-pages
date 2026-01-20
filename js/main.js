@@ -3,7 +3,9 @@ import {
   setPendingBet, checkHit, resetCards, resetStats,
   incAgreeCount, getAgreeCount,
   getRecentRate, RECENT_N,
-  historyRounds, HISTORY_N
+  historyRounds, HISTORY_N,
+  shoeUnits, noBetStreak, cooldownLeft,
+  STOP_LOSS_U, TAKE_PROFIT_U, NO_BET_ALERT_N
 } from "./state.js?v=20260117";
 
 import { calcRun, calcMatrix, calcBetSuggestion, getActualWinner } from "./logic.js?v=20260117";
@@ -44,26 +46,69 @@ function cardImgUrl(v){
   return `https://deckofcardsapi.com/static/img/${r}${suit}.png`;
 }
 
-function getPhaseText(){
+function getPhaseText(betSuggestion) {
   const r = getRecentRate();
-  if(r == null) return `盤況：—`;
 
-  const pct = (r * 100).toFixed(0);
-  if(r < 0.45) return `盤況：⚠️反開房 建議反打`;
-  if(r <= 0.55) return `盤況：方向不明，先觀察`;
-  return `盤況：🔥正開房 可正常跟`;
+  // ===== 第 1 行：盤況 =====
+  let line1 = "盤況：—";
+  if (r != null) {
+    if (r < 0.45) line1 = "盤況：反開房（偏亂）";
+    else if (r <= 0.55) line1 = "盤況：方向不明";
+    else line1 = "盤況：正開房（穩定）";
+  }
+
+  // ===== 第 2 行：狀態（文字不變色，emoji 在後）=====
+  let line2 = "狀態：可依建議操作 🟢";
+
+  // 節奏 Gate（最高優先）
+  if (cooldownLeft.value > 0) {
+    line2 = `狀態：冷卻中（剩 ${cooldownLeft.value} 把） 🔴`;
+  } else if (shoeUnits.value <= STOP_LOSS_U) {
+    line2 = "狀態：已達止損｜建議換靴 🔴";
+  } else if (shoeUnits.value >= TAKE_PROFIT_U) {
+    line2 = "狀態：已達止盈｜建議收工 🔴";
+  } else if (noBetStreak.value >= NO_BET_ALERT_N) {
+    line2 = `狀態：連續不下注 ${noBetStreak.value} 次｜建議換桌 🟠`;
+  }
+
+  // 一般 NO_BET（原因）
+  if (betSuggestion?.action === "NO_BET") {
+    if (betSuggestion.reason === "COOLDOWN") {
+      line2 = `狀態：冷卻中（剩 ${cooldownLeft.value} 把） 🔴`;
+    } else if (betSuggestion.reason === "STOP_LOSS") {
+      line2 = "狀態：已達止損｜建議換靴 🔴";
+    } else if (betSuggestion.reason === "TAKE_PROFIT") {
+      line2 = "狀態：已達止盈｜建議收工 🔴";
+    } else {
+      const reasonText = betSuggestion.text || "不下注";
+      line2 = `狀態：不下注｜${reasonText.replace("，不下注", "")} 🟠`;
+    }
+  }
+
+  // ===== 第 3 行：單靴（只讓數字上色）=====
+  const u = Number(shoeUnits.value || 0);
+  const sign = u > 0 ? "+" : "";
+  const valueClass = u > 0 ? "u-plus" : (u < 0 ? "u-minus" : "");
+
+  const line3 = `單靴：<span class="${valueClass}">${sign}${u}u</span>`;
+
+  // 注意：第 3 行要用 innerHTML 顯示
+  return {
+    text: `${line1}\n${line2}\n`,
+    unitHtml: line3
+  };
 }
 
 export function onInputChanged(){
   renderCards(cards, cardImgUrl);
 }
 
-export function startNewRound(){
+export function startNewRound() {
   // 只清牌，不清統計、不清「同一場一致次數」
   resetCards();
   renderCards(cards, cardImgUrl);
   resetUIKeepColon();
- renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText(null));
 }
 
 export function settleIfReady(){
@@ -73,8 +118,8 @@ export function settleIfReady(){
   }
 }
 
-function settleRound(){
-  if(!done.value) return;
+function settleRound() {
+  if (!done.value) return;
 
   const runResult = calcRun(cards);
   const matrixResult = calcMatrix(cards);
@@ -86,33 +131,39 @@ function settleRound(){
       : null;
 
   // 同一場累積：同向就 +1；衝突不歸零
-  if(agreeDir) incAgreeCount(agreeDir);
+  if (agreeDir) incAgreeCount(agreeDir);
 
-  // 取得該方向累積一致次數
-  const agreeCountForDir = agreeDir ? getAgreeCount(agreeDir) : 0;
-
-    // ✅ 先抓「近10把命中率」（可能是 null）
-  //    下面 renderStats / calcBetSuggestion 都會用到
+  // 近 N 把命中率（可能是 null）
   const recentRate = getRecentRate();
 
-  // ✅ 把「近10把命中率」傳進畫面顯示
-  renderStats(hitCount.value, recentRate, getPhaseText());
-
-  const betSuggestion = calcBetSuggestion(runResult, matrixResult, recentRate);
-  renderResult(runResult, matrixResult, betSuggestion);
-
-  // 用本把結果驗證上一把
+  // 本把先結算上一把（用本把結果驗證上一把）
   const actualWinner = getActualWinner(cards);
   checkHit(actualWinner);
 
-  // 只有真的 BET 才存 pendingBet（加上 ? 避免 betSuggestion 炸掉）
-  if(betSuggestion?.action === "BET" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")){
-    setPendingBet(betSuggestion.dir);
-  }else{
-    setPendingBet(null);
+  // 冷卻倒數：每結算一把就 -1
+  if (cooldownLeft.value > 0) cooldownLeft.value -= 1;
+
+  // 計算新建議（會吃到 shoeUnits / cooldown 狀態）
+  const betSuggestion = calcBetSuggestion(runResult, matrixResult, recentRate, {
+    shoeUnits: shoeUnits.value,
+    cooldownLeft: cooldownLeft.value
+  });
+
+  renderResult(runResult, matrixResult, betSuggestion);
+
+  // 連續 NO_BET 計數
+  if (betSuggestion?.action === "NO_BET") noBetStreak.value += 1;
+  else noBetStreak.value = 0;
+
+  // 只有真的 BET 才存 pendingBet
+  if (betSuggestion?.action === "BET" && (betSuggestion?.dir === "莊" || betSuggestion?.dir === "閒")) {
+    setPendingBet(betSuggestion.dir, betSuggestion.unit || 0);
+  } else {
+    setPendingBet(null, 0);
   }
 
-  renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  // 更新統計/盤況/歷史顯示
+  renderStats(hitCount.value, recentRate, getPhaseText(betSuggestion));
   renderHistory(historyRounds, HISTORY_N);
 }
 
@@ -142,27 +193,27 @@ window.undo = function(){
   renderCards(cards, cardImgUrl);
 
   resetUIKeepColon();
-  renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText(null));
 };
 
 window.resetAll = function(){
   resetCards();
   renderCards(cards, cardImgUrl);
   resetUIKeepColon();
-  renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText(null));
 };
 
 // 只重置統計（同時會重置「同一場一致次數」）
 window.resetStatsOnly = function(){
   resetStats();
-  renderStats(hitCount.value, getRecentRate(), getPhaseText());
+  renderStats(hitCount.value, getRecentRate(), getPhaseText(null));
 };
 
 // 初始化
 initButtons();
 renderCards(cards, cardImgUrl);
 resetUIKeepColon();
-renderStats(hitCount.value, getRecentRate(), getPhaseText());
+renderStats(hitCount.value, getRecentRate(), getPhaseText(null));
 renderHistory(historyRounds, HISTORY_N);
 
 function bindHistoryClear(){
